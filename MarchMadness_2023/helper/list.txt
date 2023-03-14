@@ -1,0 +1,68 @@
+Oral Roberts	12	Josh
+VCU	12	Brant
+Louisiana	13	Justin
+Northwestern	7	Josh
+Southeast Missouri State	16	Jeremy
+Marquette	2	Brant
+Florida Atlantic	9	Josh
+TCU	6	Justin
+Texas	2	Joe
+Vermont	15	Devan
+UC Santa Barbara	14	Nick
+Grand Canyon	14	Justin
+Arizona State	11	Nick
+Providence	11	Jeremy
+Memphis	8	Devan
+Duke	5	Nick
+Howard	16	Devan
+Boise State	10	Justin
+Colgate	15	Nick
+Maryland	8	Nick
+Kentucky	6	Brant
+Alabama	1	Nick
+Fairleigh Dickinson	16	Jeremy
+Penn State	10	Joe
+Kansas State	3	Justin
+Indiana	4	Jeremy
+Kent State	13	Nick
+Auburn	9	Josh
+Northern Kentucky	16	Joe
+Furman	13	Josh
+San Diego State	5	Devan
+Connecticut	4	Jeremy
+Nevada	11	Nick
+West Virginia	9	Joe
+Illinois	9	Josh
+Baylor	3	Justin
+Pittsburgh	11	Jeremy
+Houston	1	Devan
+Xavier	3	Jeremy
+UNC Asheville	15	Josh
+Texas A&M	7	Josh
+Drake	12	Brant
+Michigan State	7	Joe
+Iowa State	6	Josh
+Kennesaw State	14	Jeremy
+Mississippi State	11	Justin
+Utah State	10	Devan
+UCLA	2	Devan
+Texas Southern	16	Jeremy
+Saint Mary's	5	Josh
+Miami	5	Nick
+Texas A&M-Corpus Christi	16	Jeremy
+Purdue	1	Joe
+Arizona	2	Brant
+Creighton	6	Nick
+USC	10	Josh
+Montana State	14	Nick
+Arkansas	8	Joe
+Iowa	8	Joe
+Tennessee	4	Josh
+Princeton	15	Justin
+North Carolina State	11	Joe
+Gonzaga	3	Brant
+Kansas	1	Jeremy
+Charleston	12	Josh
+Iona	13	Justin
+Virginia	4	Justin
+Missouri	7	Justin
