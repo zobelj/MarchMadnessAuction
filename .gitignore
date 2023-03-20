@@ -1,0 +1,6 @@
+.DS_Store
+.DS_Store/
+*/.DS_Store
+*/.DS_Store/
+MarchMadness_2023/avg_pts.csv
+MarchMadness_2023/__pycache__/
