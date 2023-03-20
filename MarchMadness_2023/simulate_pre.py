@@ -1,171 +1,19 @@
 #!/usr/bin/env python3
 
-import math
-import csv
-
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from numpy import random, mean, var
-import sqlite3
+from numpy import mean, var
 import random as rd
 import string as str
 
-# import team objects
-from teams import *
-
-# constants
-pyth_exponent = 11.5
-round_to_points = {64: 1, 32: 2, 16: 3, 8: 4, 4: 5, 2: 10, -1: 0}
-
-def create_database(drop_existing=False):
-    conn = sqlite3.connect('march_madness_pre.db')
-    c = conn.cursor()
-
-    
-    if(drop_existing):
-        c.execute("DROP TABLE IF EXISTS march_madness_pre")
-        c.execute("DROP TABLE IF EXISTS march_madness_pre_team_pts")
-    # Create table
-    c.execute('''CREATE TABLE IF NOT EXISTS march_madness_pre
-                    (sim_id text PRIMARY KEY,
-                        Devan_win integer, Jeremy_win integer, Josh_win integer, Justin_win integer, Brant_win integer, Nick_win integer, Joe_win integer,
-                        Devan_pts integer, Jeremy_pts integer, Josh_pts integer, Justin_pts integer, Brant_pts integer, Nick_pts integer, Joe_pts integer,
-                 mw_firstfour_11 text, mw_firstfour_11_blowout integer, west_firstfour_11 text, west_firstfour_11_blowout integer,
-                 east_firstfour_16 text, east_firstfour_16_blowout integer, south_firstfour_16 text, south_firstfour_16_blowout integer,
-                 r64_w_game1 text, r64_w_game1_blowout integer, r64_w_game2 text, r64_w_game2_blowout integer, r64_w_game3 text, r64_w_game3_blowout integer, r64_w_game4 text, r64_w_game4_blowout integer, 
-                 r64_w_game5 text, r64_w_game5_blowout integer, r64_w_game6 text, r64_w_game6_blowout integer, r64_w_game7 text, r64_w_game7_blowout integer, r64_w_game8 text, r64_w_game8_blowout integer,
-                 r64_mw_game1 text, r64_mw_game1_blowout integer, r64_mw_game2 text, r64_mw_game2_blowout integer, r64_mw_game3 text, r64_mw_game3_blowout integer, r64_mw_game4 text, r64_mw_game4_blowout integer,
-                r64_mw_game5 text, r64_mw_game5_blowout integer, r64_mw_game6 text, r64_mw_game6_blowout integer, r64_mw_game7 text, r64_mw_game7_blowout integer, r64_mw_game8 text, r64_mw_game8_blowout integer,
-                r64_e_game1 text, r64_e_game1_blowout integer, r64_e_game2 text, r64_e_game2_blowout integer, r64_e_game3 text, r64_e_game3_blowout integer, r64_e_game4 text, r64_e_game4_blowout integer,
-                r64_e_game5 text, r64_e_game5_blowout integer, r64_e_game6 text, r64_e_game6_blowout integer, r64_e_game7 text, r64_e_game7_blowout integer, r64_e_game8 text, r64_e_game8_blowout integer,
-                r64_s_game1 text, r64_s_game1_blowout integer, r64_s_game2 text, r64_s_game2_blowout integer, r64_s_game3 text, r64_s_game3_blowout integer, r64_s_game4 text, r64_s_game4_blowout integer,
-                r64_s_game5 text, r64_s_game5_blowout integer, r64_s_game6 text, r64_s_game6_blowout integer, r64_s_game7 text, r64_s_game7_blowout integer, r64_s_game8 text, r64_s_game8_blowout integer,
-                r32_w_game1 text, r32_w_game1_blowout integer, r32_w_game2 text, r32_w_game2_blowout integer, r32_w_game3 text, r32_w_game3_blowout integer, r32_w_game4 text, r32_w_game4_blowout integer,
-                r32_mw_game1 text, r32_mw_game1_blowout integer, r32_mw_game2 text, r32_mw_game2_blowout integer, r32_mw_game3 text, r32_mw_game3_blowout integer, r32_mw_game4 text, r32_mw_game4_blowout integer,
-                r32_e_game1 text, r32_e_game1_blowout integer, r32_e_game2 text, r32_e_game2_blowout integer, r32_e_game3 text, r32_e_game3_blowout integer, r32_e_game4 text, r32_e_game4_blowout integer,
-                r32_s_game1 text, r32_s_game1_blowout integer, r32_s_game2 text, r32_s_game2_blowout integer, r32_s_game3 text, r32_s_game3_blowout integer, r32_s_game4 text, r32_s_game4_blowout integer,
-                r16_w_game1 text, r16_w_game1_blowout integer, r16_w_game2 text, r16_w_game2_blowout integer, r16_mw_game1 text, r16_mw_game1_blowout integer, r16_mw_game2 text, r16_mw_game2_blowout integer,
-                r16_e_game1 text, r16_e_game1_blowout integer, r16_e_game2 text, r16_e_game2_blowout integer, r16_s_game1 text, r16_s_game1_blowout integer, r16_s_game2 text, r16_s_game2_blowout integer,
-                west_winner text, west_winner_blowout integer, midwest_winner text, midwest_winner_blowout integer, east_winner text, east_winner_blowout integer, south_winner text, south_winner_blowout integer,
-                south_east_winner text, south_east_winner_blowout integer, west_midwest_winner text, west_midwest_winner_blowout integer,
-                final_winner text, final_winner_blowout integer)''')
-    c.execute('''CREATE TABLE IF NOT EXISTS march_madness_pre_team_pts
-                    (sim_id text PRIMARY KEY,
-                        mississippi_state_pts integer, pittsburgh_pts integer, arizona_state_pts integer, nevada_pts integer,
-                        texas_southern_pts integer, fairleigh_dickinson_pts integer, texas_am_corpus_christi_pts integer, southeast_missouri_state_pts integer,
-                        kansas_pts integer, howard_pts integer, arkansas_pts integer, illinois_pts integer, saint_marys_pts integer, vcu_pts integer, connecticut_pts integer, iona_pts integer,
-                        tcu_pts integer, gonzaga_pts integer, grand_canyon_pts integer, northwestern_pts integer, boise_state_pts integer, ucla_pts integer, unc_asheville_pts integer,
-                        houston_pts integer, northern_kentucky_pts integer, iowa_pts integer, auburn_pts integer, miami_pts integer, drake_pts integer, indiana_pts integer, kent_state_pts integer,
-                        iowa_state_pts integer, xavier_pts integer, kennesaw_state_pts integer, texas_am_pts integer, penn_state_pts integer, texas_pts integer, colgate_pts integer,
-                        purdue_pts integer, memphis_pts integer, florida_atlantic_pts integer, duke_pts integer, oral_roberts_pts integer, tennessee_pts integer, louisiana_pts integer,
-                        kentucky_pts integer, providence_pts integer, kansas_state_pts integer, montana_state_pts integer, michigan_state_pts integer, usc_pts integer, marquette_pts integer, vermont_pts integer,
-                        alabama_pts integer, maryland_pts integer, west_virginia_pts integer, san_diego_state_pts integer, charleston_pts integer, virginia_pts integer, furman_pts integer,
-                        creighton_pts integer, north_carolina_state_pts integer, baylor_pts integer, uc_santa_barbara_pts integer, missouri_pts integer, utah_state_pts integer, arizona_pts integer, princeton_pts integer)
-                        
-                        ''')
-                 
-                 
-                 
-
-    # Save (commit) the changes
-    conn.commit()
-
-    # We can also close the connection if we are done with it.
-    # Just be sure any changes have been committed or they will be lost.
-    conn.close()
-
-def sim_game(team1, team2, round, points_dict, points_decided, force):
-
-    # real simulation
-    if(len(force) == 0):
-        team1_win_percentage_season = (team1.adjO**pyth_exponent) / ((team1.adjO**pyth_exponent) + (team1.adjD**pyth_exponent))
-        team2_win_percentage_season = (team2.adjO**pyth_exponent) / ((team2.adjO**pyth_exponent) + (team2.adjD**pyth_exponent)) 
-
-        team1_win_percentage = ((team1_win_percentage_season - (team1_win_percentage_season * team2_win_percentage_season)) / ((team1_win_percentage_season + team2_win_percentage_season) - (2 * team1_win_percentage_season * team2_win_percentage_season)))
-        team2_win_percentage = 1 - team1_win_percentage
-
-        winner = random.choice([team1, team2], p=[team1_win_percentage, team2_win_percentage])
-        loser = team2 if winner is team1 else team1
-        blowout_pts = 0
-        if(winner.seed > loser.seed):
-            blowout_pts = blowout(winner, loser)
-            pts = round_to_points[round] + 2 + blowout_pts
-            points_dict[winner.owner] += pts
-            winner.pts += pts
-        else:
-            blowout_pts = blowout(winner, loser)
-            pts = round_to_points[round] + blowout_pts
-            points_dict[winner.owner] += pts
-            winner.pts += pts
-
-    # forced sim
-    # 1 for a normal win, 2 for a 10 point win, etc
-    # Underdog and round are automatically accounted for!
-    else:
-        if(force[0] != 0):
-            winner = team1
-            loser = team2
-            force = force[0]
-        else:
-            loser = team1
-            winner = team2
-            force = force[1]
-        
-        if(winner.seed > loser.seed):
-            points_dict[winner.owner] += round_to_points[round] + 2 + force - 1
-            points_decided[winner.owner] += round_to_points[round] + 2 + force - 1
-        else:
-            points_dict[winner.owner] += round_to_points[round] + force - 1
-            points_decided[winner.owner] += round_to_points[round] + force - 1
-
-    return winner, blowout_pts
-
-def blowout(winner, loser):
-    blowout_pts = 0
-
-    ten_pt = 1 / ( 1 + math.exp(-1 * ( -0.3395 - 0.0785 * winner.seed + 0.09093 * loser.seed ) ))
-    ten_pct_prob = random.random()
-
-    # < 10 pt win
-    if(ten_pct_prob > ten_pt):
-        return blowout_pts
-    
-    blowout_pts += 1
-    twenty_pt = 1 / ( 1 + math.exp(-1 * ( -1.5551 - 0.0785 * winner.seed + 0.1107 * loser.seed ) ))
-    twenty_pct_prob = random.random()
-
-    # 10-19 pt win
-    if(twenty_pct_prob > twenty_pt):
-        return blowout_pts
-    
-    blowout_pts += 1
-    thirty_pt = 1 / ( 1 + math.exp(-1 * ( -1.1171 - 0.0551 * winner.seed + 0.0166 * loser.seed ) ))
-    thirty_pct_prob = random.random()
-
-    # 20-29 pt win
-    if(thirty_pct_prob > thirty_pt):
-        return blowout_pts
-    
-    # 30+ pt win
-    blowout_pts += 1
-
-    return blowout_pts
-
-def save_avg_pts(num_sims):
-    avg_pts = {}
-    for team in team_list:
-        avg_pts[f"{team.name}'"] = team.pts / num_sims
-
-    # save the dictioanry to a csv
-    with open('avg_pts.csv', 'w') as csv_file:
-        writer = csv.writer(csv_file)
-        for key, value in avg_pts.items():
-            writer.writerow([key, value])
+from lib.teams import *
+from lib.database import create_database, run_query
+from lib.simulate import sim_game
 
 #########################################################################################################
-headliner = "Pre-Tournament"
-i = 0
+headliner = "Gonzaga beats TCU"
+i = 53
 
 #########################################################################################################
 create_database()
@@ -304,9 +152,7 @@ def sim_tournament():
             wins[player] += 1
         
     # add row to march_madness_pre.db
-    conn = sqlite3.connect('march_madness_pre.db')
-    c = conn.cursor()
-    string = (f'''INSERT INTO march_madness_pre VALUES (
+    query_1 = (f'''INSERT INTO march_madness_pre VALUES (
             '{sim_id}', 
             {wins["Devan"]}, {wins["Jeremy"]}, {wins["Josh"]}, {wins["Justin"]}, {wins["Brant"]}, {wins["Nick"]}, {wins["Joe"]},
             {points_dict["Devan"]}, {points_dict["Jeremy"]}, {points_dict["Josh"]}, {points_dict["Justin"]}, {points_dict["Brant"]}, {points_dict["Nick"]}, {points_dict["Joe"]},
@@ -331,7 +177,7 @@ def sim_tournament():
                 "{west_midwest_winner[0].name}", {west_midwest_winner[1]},
                 "{champion[0].name}", {champion[1]})''')
                
-    string_2 = (f'''INSERT INTO march_madness_pre_team_pts VALUES(
+    query_2 = (f'''INSERT INTO march_madness_pre_team_pts VALUES(
                 '{sim_id}',
                 {mississippi_state.pts}, {pittsburgh.pts}, {arizona_state.pts}, {nevada.pts},
                 {texas_southern.pts}, {fairleigh_dickinson.pts}, {texas_am_corpus_christi.pts}, {southeast_missouri_state.pts},
@@ -344,17 +190,11 @@ def sim_tournament():
                 {alabama.pts}, {maryland.pts}, {west_virginia.pts}, {san_diego_state.pts}, {charleston.pts}, {virginia.pts}, {furman.pts},
                 {creighton.pts}, {north_carolina_state.pts}, {baylor.pts}, {uc_santa_barbara.pts}, {missouri.pts}, {utah_state.pts}, {arizona.pts}, {princeton.pts})''')
 
-    conn.execute(string)   
-    conn.execute(string_2)        
-    conn.commit()
-    conn.close()
-
+    run_query(query_1)
+    run_query(query_2)
 
     return points_dict, points_decided
 
-
-# running total of auction wins and points
-num_wins = {"Devan": 0, "Jeremy": 0, "Josh": 0, "Justin": 0, "Brant": 0, "Nick": 0, "Joe": 0}
 
 # list points scored in each tourney simulation
 Devan = []
@@ -365,11 +205,13 @@ Brant = []
 Nick = []
 Joe = []
 points_decided = {}
+win_pct = []
 
 def sim_many_tournaments(num_sims):
+    global win_pct
     for _ in range(num_sims):
-        if(_ % 1000 == 0):
-            print("Simulating tournament", _)
+        if _ % 1000 == 0:
+            print(f"Simulating tournament {_} of {num_sims}...")
         points, points_decided = sim_tournament()
 
         Devan.append(points["Devan"])
@@ -380,15 +222,30 @@ def sim_many_tournaments(num_sims):
         Nick.append(points["Nick"])
         Joe.append(points["Joe"])
 
-        num_wins[max(points, key=points.get)] += 1
+    # get the average points scored by each player from the database
+    avg_points = run_query('''SELECT ROUND(AVG(Devan_pts), 2) as Devan_avg_pts,
+                        ROUND(AVG(Jeremy_pts), 2) as Jeremy_avg_pts,
+                        ROUND(AVG(Josh_pts), 2) as Josh_avg_pts,
+                        ROUND(AVG(Justin_pts), 2) as Justin_avg_pts,
+                        ROUND(AVG(Nick_pts), 2) as Nick_avg_pts,
+                        ROUND(AVG(Joe_pts), 2) as Joe_avg_pts
+                    FROM march_madness''', fetch="one")
+    
+    # get the win percentage for each player from the database
+    win_pct = run_query('''SELECT (ROUND(100 * AVG(Devan_win), 2) || '%') as Devan_win_pct,
+                        (ROUND(100 * AVG(Jeremy_win), 2) || '%') as Jeremy_win_pct,
+                        (ROUND(100 * AVG(Josh_win), 2) || '%') as Josh_win_pct,
+                        (ROUND(100 * AVG(Justin_win), 2) || '%') as Justin_win_pct,
+                        (ROUND(100 * AVG(Nick_win), 2) || '%') as Nick_win_pct,
+                        (ROUND(100 * AVG(Joe_win), 2) || '%') as Joe_win_pct
+                    FROM march_madness''', fetch="one")
 
-    for key in num_wins:
-        num_wins[key] = num_wins[key] * 100 / num_sims
-
-    avg_points = {key: mean(points_list) for key, points_list in zip(num_wins.keys(), [Devan, Jeremy, Josh, Justin, Brant, Nick, Joe])}
+    # convert DB results into python dictionaries
+    avg_points = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], avg_points))
+    win_pct = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], win_pct))
 
     print("<--- Expected win percentages --->")
-    print(num_wins)
+    print(win_pct)
 
     print("<--- Decided points --->")
     print(points_decided)
@@ -396,47 +253,39 @@ def sim_many_tournaments(num_sims):
     print("<--- Average points scored --->")
     print(avg_points)
 
-    # print championship odds with 5 decimal places
-    print(f"\nPurdue chmpionship odds: {float(purdue.championships / num_sims * 100):0.8f}%")
-    print(f"\nFairleigh Dickinson chmpionship odds: {float(fairleigh_dickinson.championships / num_sims * 100):0.8f}%")
-
-    #save_avg_pts(num_sims)    
-    
-
-sim_many_tournaments(50_000)
+sim_many_tournaments(10_000)
 # plot density function for owners with non-zero variance
 legend_list = []
 THICKNESS = 2.5
 
 if(var(Devan)):
     sns.kdeplot(Devan, linewidth=THICKNESS, color="tab:blue")
-    legend_list.append("Devan:   {0}%".format(num_wins["Devan"]))
-
+    legend_list.append(f"Jeremy:  {win_pct['Devan']}")
 
 if(var(Jeremy)):
     sns.kdeplot(Jeremy, linewidth=THICKNESS, color="tab:orange")
-    legend_list.append("Jeremy:  {0}%".format(num_wins["Jeremy"]))
+    legend_list.append(f"Jeremy:  {win_pct['Jeremy']}")
 
 if(var(Josh)):
     sns.kdeplot(Josh, linewidth=THICKNESS, color="tab:green")
-    legend_list.append("Josh:    {0}%".format(num_wins["Josh"]))
+    legend_list.append(f"Jeremy:  {win_pct['Josh']}")
 
-if(var(Justin)):
-    sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
-    legend_list.append("Justin:  {0}%".format(num_wins["Justin"]))
+# if(var(Justin)):
+#     sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
+#     legend_list.append(f"Jeremy:  {win_pct['Justin']}")
 
-
-if(var(Brant)):
-    sns.kdeplot(Brant, linewidth=THICKNESS, color="tab:purple")
-    legend_list.append("Brant:   {0}%".format(num_wins["Brant"]))
+# Brant's odds are < 1%
+# if(var(Brant)):
+#     sns.kdeplot(Brant, linewidth=THICKNESS, color="tab:purple")
+#     legend_list.append(f"Jeremy:  {win_pct['Brant']}")
 
 if(var(Nick)):
     sns.kdeplot(Nick, linewidth=THICKNESS, color="tab:brown")
-    legend_list.append("Nick:    {0}%".format(num_wins["Nick"]))
+    legend_list.append(f"Jeremy:  {win_pct['Nick']}")
 
 if(var(Joe)):
     sns.kdeplot(Joe, linewidth=THICKNESS, color="tab:pink")
-    legend_list.append("Joe:     {0}%".format(num_wins["Joe"]))
+    legend_list.append(f"Jeremy:  {win_pct['Joe']}")
 
 # configure and display plot
 plt.title(headliner)
@@ -445,4 +294,4 @@ plt.ylabel("")
 plt.yticks([])
 plt.legend(legend_list)
 plt.savefig(f"./mm_figs/mm_{i}.png", dpi=300)
-plt.show()
+#plt.show()
