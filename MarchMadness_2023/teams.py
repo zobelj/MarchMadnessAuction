@@ -7,6 +7,8 @@ class Team():
         self.seed = seed
         self.adjO = df.loc[name, "AdjOE"]
         self.adjD = df.loc[name, "AdjDE"]
+        self.pts = 0
+        self.championships = 0
         
 
 # read in the excel file of kenpom data
@@ -16,7 +18,7 @@ df.set_index("TeamName", inplace=True)
 
 # create team objects
 oral_roberts = Team("Oral Roberts", "Josh", 12)
-vanderbilt = Team("Vanderbilt", "Brant", 12)
+vcu = Team("VCU", "Brant", 12)
 louisiana = Team("Louisiana", "Justin", 13)
 northwestern = Team("Northwestern", "Josh", 7)
 southeast_missouri_state = Team("Southeast Missouri St.", "Jeremy", 16)
@@ -83,3 +85,5 @@ charleston = Team("Charleston", "Josh", 12)
 iona = Team("Iona", "Justin", 13)
 virginia = Team("Virginia", "Justin", 4)
 missouri = Team("Missouri", "Justin", 7)
+
+team_list = [oral_roberts, vcu, louisiana, northwestern, southeast_missouri_state, marquette, florida_atlantic, tcu, texas, vermont, uc_santa_barbara, grand_canyon, arizona_state, providence, memphis, duke, howard, boise_state, colgate, maryland, kentucky, alabama, fairleigh_dickinson, penn_state, kansas_state, indiana, kent_state, auburn, northern_kentucky, furman, san_diego_state, connecticut, nevada, west_virginia, illinois, baylor, pittsburgh, houston, xavier, unc_asheville, texas_am, drake, michigan_state, iowa_state, kennesaw_state, mississippi_state, utah_state, ucla, texas_southern, saint_marys, miami, texas_am_corpus_christi, purdue, arizona, creighton, usc, montana_state, arkansas, iowa, tennessee, princeton, north_carolina_state, gonzaga, kansas, charleston, iona, virginia, missouri]
