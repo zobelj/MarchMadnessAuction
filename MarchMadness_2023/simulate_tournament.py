@@ -343,10 +343,6 @@ def sim_tournament():
 
     return points_dict, points_decided
 
-
-# running total of auction wins and points
-num_wins = {"Devan": 0, "Jeremy": 0, "Josh": 0, "Justin": 0, "Brant": 0, "Nick": 0, "Joe": 0}
-
 # list points scored in each tourney simulation
 Devan = []
 Jeremy = []
@@ -356,8 +352,10 @@ Brant = []
 Nick = []
 Joe = []
 points_decided = {}
+win_pct = []
 
 def sim_many_tournaments(num_sims):
+    global win_pct
     for _ in range(num_sims):
         if _ % 1000 == 0:
             print(f"Simulating tournament {_} of {num_sims}...")
@@ -371,15 +369,34 @@ def sim_many_tournaments(num_sims):
         Nick.append(points["Nick"])
         Joe.append(points["Joe"])
 
-        num_wins[max(points, key=points.get)] += 1
+    # get the average points scored by each player from the database
+    conn = sqlite3.connect("march_madness.db")
+    c = conn.cursor()
+    c.execute('''SELECT ROUND(AVG(Devan_pts), 2) as Devan_avg_pts,
+                        ROUND(AVG(Jeremy_pts), 2) as Jeremy_avg_pts,
+                        ROUND(AVG(Josh_pts), 2) as Josh_avg_pts,
+                        ROUND(AVG(Justin_pts), 2) as Justin_avg_pts,
+                        ROUND(AVG(Nick_pts), 2) as Nick_avg_pts,
+                        ROUND(AVG(Joe_pts), 2) as Joe_avg_pts
+                    FROM march_madness''')
+    avg_points = c.fetchone()
+    # get the win percentage for each player from the database
+    c.execute('''SELECT (ROUND(100 * AVG(Devan_win), 2) || '%') as Devan_win_pct,
+                        (ROUND(100 * AVG(Jeremy_win), 2) || '%') as Jeremy_win_pct,
+                        (ROUND(100 * AVG(Josh_win), 2) || '%') as Josh_win_pct,
+                        (ROUND(100 * AVG(Justin_win), 2) || '%') as Justin_win_pct,
+                        (ROUND(100 * AVG(Nick_win), 2) || '%') as Nick_win_pct,
+                        (ROUND(100 * AVG(Joe_win), 2) || '%') as Joe_win_pct
+                    FROM march_madness''')
+    win_pct = c.fetchone()
+    conn.close()
 
-    for key in num_wins:
-        num_wins[key] = num_wins[key] * 100 / num_sims
-
-    avg_points = {key: mean(points_list) for key, points_list in zip(num_wins.keys(), [Devan, Jeremy, Josh, Justin, Brant, Nick, Joe])}
+    # convert DB results into python dictionaries
+    avg_points = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], avg_points))
+    win_pct = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], win_pct))
 
     print("<--- Expected win percentages --->")
-    print(num_wins)
+    print(win_pct)
 
     print("<--- Decided points --->")
     print(points_decided)
@@ -388,39 +405,39 @@ def sim_many_tournaments(num_sims):
     print(avg_points)
 
 
-sim_many_tournaments(100_000)
+sim_many_tournaments(10_000)
 # plot density function for owners with non-zero variance
 legend_list = []
 THICKNESS = 2.5
 
 if(var(Devan)):
     sns.kdeplot(Devan, linewidth=THICKNESS, color="tab:blue")
-    legend_list.append("Devan:   {0}%".format(num_wins["Devan"]))
+    legend_list.append(f"Jeremy:  {win_pct['Devan']}")
 
 if(var(Jeremy)):
     sns.kdeplot(Jeremy, linewidth=THICKNESS, color="tab:orange")
-    legend_list.append("Jeremy:  {0}%".format(num_wins["Jeremy"]))
+    legend_list.append(f"Jeremy:  {win_pct['Jeremy']}")
 
 if(var(Josh)):
     sns.kdeplot(Josh, linewidth=THICKNESS, color="tab:green")
-    legend_list.append("Josh:    {0}%".format(num_wins["Josh"]))
+    legend_list.append(f"Jeremy:  {win_pct['Josh']}")
 
 # if(var(Justin)):
 #     sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
-#     legend_list.append("Justin:  {0}%".format(num_wins["Justin"]))
+#     legend_list.append(f"Jeremy:  {win_pct['Justin']}")
 
 # Brant's odds are < 1%
 # if(var(Brant)):
 #     sns.kdeplot(Brant, linewidth=THICKNESS, color="tab:purple")
-#     legend_list.append("Brant:   {0}%".format(num_wins["Brant"]))
+#     legend_list.append(f"Jeremy:  {win_pct['Brant']}")
 
 if(var(Nick)):
     sns.kdeplot(Nick, linewidth=THICKNESS, color="tab:brown")
-    legend_list.append("Nick:    {0}%".format(num_wins["Nick"]))
+    legend_list.append(f"Jeremy:  {win_pct['Nick']}")
 
 if(var(Joe)):
     sns.kdeplot(Joe, linewidth=THICKNESS, color="tab:pink")
-    legend_list.append("Joe:     {0}%".format(num_wins["Joe"]))
+    legend_list.append(f"Jeremy:  {win_pct['Joe']}")
 
 # configure and display plot
 plt.title(headliner)
