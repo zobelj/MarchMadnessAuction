@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from numpy import mean, var
+from numpy import var
 import random as rd
 import string as str
 
