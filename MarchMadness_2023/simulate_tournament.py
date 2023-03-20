@@ -282,7 +282,6 @@ def sim_tournament():
     south_winner = sim_game(r16_s_game1[0], r16_s_game2[0], 8, points_dict, points_decided, [])
 
     # Final Four
-<<<<<<< HEAD
     south_east_winner = sim_game(south_winner[0], east_winner[0], 4, points_dict, points_decided, [])
     west_midwest_winner = sim_game(west_winner[0], midwest_winner[0], 4, points_dict, points_decided, [])
 
@@ -341,15 +340,6 @@ def sim_tournament():
     conn.execute(string_2)        
     conn.commit()
     conn.close()
-
-=======
-    south_east_winner = sim_game(south_winner, east_winner, 4, points_dict, points_decided, [])
-    west_midwest_winner = sim_game(west_winner, midwest_winner, 4, points_dict, points_decided, [])
-
-    # Championship
-    champion = sim_game(south_east_winner, west_midwest_winner, 2, points_dict, points_decided, [])
-    champion.championships += 1
->>>>>>> bb988d309d62536429ca5e562f59c0108e0c6deb
 
     return points_dict, points_decided
 
