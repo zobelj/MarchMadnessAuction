@@ -7,6 +7,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from numpy import random, mean, var
+import sqlite3
 
 # import team objects
 from teams import *
@@ -14,6 +15,47 @@ from teams import *
 # constants
 pyth_exponent = 11.5
 round_to_points = {64: 1, 32: 2, 16: 3, 8: 4, 4: 5, 2: 10, -1: 0}
+
+def create_database(drop_existing=False):
+    conn = sqlite3.connect('march_madness_pre.db')
+    c = conn.cursor()
+
+    
+    if(drop_existing):
+        c.execute("DROP TABLE IF EXISTS march_madness_pre")
+    # Create table
+    c.execute('''CREATE TABLE IF NOT EXISTS march_madness_pre
+                    (Devan_win integer, Jeremy_win integer, Josh_win integer, Justin_win integer, Brant_win integer, Nick_win integer, Joe_win integer,
+                        Devan_pts integer, Jeremy_pts integer, Josh_pts integer, Justin_pts integer, Brant_pts integer, Nick_pts integer, Joe_pts integer,
+                 mw_firstfour_11 text, mw_firstfour_11_blowout integer, west_firstfour_11 text, west_firstfour_11_blowout integer,
+                 east_firstfour_16 text, east_firstfour_16_blowout integer, south_firstfour_16 text, south_firstfour_16_blowout integer,
+                 r64_w_game1 text, r64_w_game1_blowout integer, r64_w_game2 text, r64_w_game2_blowout integer, r64_w_game3 text, r64_w_game3_blowout integer, r64_w_game4 text, r64_w_game4_blowout integer, 
+                 r64_w_game5 text, r64_w_game5_blowout integer, r64_w_game6 text, r64_w_game6_blowout integer, r64_w_game7 text, r64_w_game7_blowout integer, r64_w_game8 text, r64_w_game8_blowout integer,
+                 r64_mw_game1 text, r64_mw_game1_blowout integer, r64_mw_game2 text, r64_mw_game2_blowout integer, r64_mw_game3 text, r64_mw_game3_blowout integer, r64_mw_game4 text, r64_mw_game4_blowout integer,
+                r64_mw_game5 text, r64_mw_game5_blowout integer, r64_mw_game6 text, r64_mw_game6_blowout integer, r64_mw_game7 text, r64_mw_game7_blowout integer, r64_mw_game8 text, r64_mw_game8_blowout integer,
+                r64_e_game1 text, r64_e_game1_blowout integer, r64_e_game2 text, r64_e_game2_blowout integer, r64_e_game3 text, r64_e_game3_blowout integer, r64_e_game4 text, r64_e_game4_blowout integer,
+                r64_e_game5 text, r64_e_game5_blowout integer, r64_e_game6 text, r64_e_game6_blowout integer, r64_e_game7 text, r64_e_game7_blowout integer, r64_e_game8 text, r64_e_game8_blowout integer,
+                r64_s_game1 text, r64_s_game1_blowout integer, r64_s_game2 text, r64_s_game2_blowout integer, r64_s_game3 text, r64_s_game3_blowout integer, r64_s_game4 text, r64_s_game4_blowout integer,
+                r64_s_game5 text, r64_s_game5_blowout integer, r64_s_game6 text, r64_s_game6_blowout integer, r64_s_game7 text, r64_s_game7_blowout integer, r64_s_game8 text, r64_s_game8_blowout integer,
+                r32_w_game1 text, r32_w_game1_blowout integer, r32_w_game2 text, r32_w_game2_blowout integer, r32_w_game3 text, r32_w_game3_blowout integer, r32_w_game4 text, r32_w_game4_blowout integer,
+                r32_mw_game1 text, r32_mw_game1_blowout integer, r32_mw_game2 text, r32_mw_game2_blowout integer, r32_mw_game3 text, r32_mw_game3_blowout integer, r32_mw_game4 text, r32_mw_game4_blowout integer,
+                r32_e_game1 text, r32_e_game1_blowout integer, r32_e_game2 text, r32_e_game2_blowout integer, r32_e_game3 text, r32_e_game3_blowout integer, r32_e_game4 text, r32_e_game4_blowout integer,
+                r32_s_game1 text, r32_s_game1_blowout integer, r32_s_game2 text, r32_s_game2_blowout integer, r32_s_game3 text, r32_s_game3_blowout integer, r32_s_game4 text, r32_s_game4_blowout integer,
+                r16_w_game1 text, r16_w_game1_blowout integer, r16_w_game2 text, r16_w_game2_blowout integer, r16_mw_game1 text, r16_mw_game1_blowout integer, r16_mw_game2 text, r16_mw_game2_blowout integer,
+                r16_e_game1 text, r16_e_game1_blowout integer, r16_e_game2 text, r16_e_game2_blowout integer, r16_s_game1 text, r16_s_game1_blowout integer, r16_s_game2 text, r16_s_game2_blowout integer,
+                west_winner text, west_winner_blowout integer, midwest_winner text, midwest_winner_blowout integer, east_winner text, east_winner_blowout integer, south_winner text, south_winner_blowout integer,
+                south_east_winner text, south_east_winner_blowout integer, west_midwest_winner text, west_midwest_winner_blowout integer,
+                final_winner text, final_winner_blowout integer)''')
+                 
+                 
+                 
+
+    # Save (commit) the changes
+    conn.commit()
+
+    # We can also close the connection if we are done with it.
+    # Just be sure any changes have been committed or they will be lost.
+    conn.close()
 
 def sim_game(team1, team2, round, points_dict, points_decided, force):
 
@@ -27,13 +69,15 @@ def sim_game(team1, team2, round, points_dict, points_decided, force):
 
         winner = random.choice([team1, team2], p=[team1_win_percentage, team2_win_percentage])
         loser = team2 if winner is team1 else team1
-
+        blowout_pts = 0
         if(winner.seed > loser.seed):
-            pts = round_to_points[round] + 2 + blowout(winner, loser)
+            blowout_pts = blowout(winner, loser)
+            pts = round_to_points[round] + 2 + blowout_pts
             points_dict[winner.owner] += pts
             winner.pts += pts
         else:
-            pts = round_to_points[round] + blowout(winner, loser)
+            blowout_pts = blowout(winner, loser)
+            pts = round_to_points[round] + blowout_pts
             points_dict[winner.owner] += pts
             winner.pts += pts
 
@@ -57,7 +101,7 @@ def sim_game(team1, team2, round, points_dict, points_decided, force):
             points_dict[winner.owner] += round_to_points[round] + force - 1
             points_decided[winner.owner] += round_to_points[round] + force - 1
 
-    return winner
+    return winner, blowout_pts
 
 def blowout(winner, loser):
     blowout_pts = 0
@@ -93,7 +137,7 @@ def blowout(winner, loser):
 def save_avg_pts(num_sims):
     avg_pts = {}
     for team in team_list:
-        avg_pts[f"{team.name}"] = team.pts / num_sims
+        avg_pts[f"{team.name}'"] = team.pts / num_sims
 
     # save the dictioanry to a csv
     with open('avg_pts.csv', 'w') as csv_file:
@@ -106,11 +150,13 @@ headliner = "Pre-Tournament"
 i = 0
 
 #########################################################################################################
+create_database()
 
 def sim_tournament():
 
     points_dict = {"Devan": 0, "Jeremy": 0, "Josh": 0, "Justin": 0, "Brant": 0, "Nick": 0, "Joe": 0}
     points_decided = {"Devan": 0, "Jeremy": 0, "Josh": 0, "Justin": 0, "Brant": 0, "Nick": 0, "Joe": 0}
+    wins = {"Devan": 0, "Jeremy": 0, "Josh": 0, "Justin": 0, "Brant": 0, "Nick": 0, "Joe": 0}
 
     # First Four
     # 2022
@@ -126,23 +172,23 @@ def sim_tournament():
     r64_w_game2 = sim_game(arkansas, illinois, 64, points_dict, points_decided, [])
     r64_w_game3 = sim_game(saint_marys, vcu, 64, points_dict, points_decided, [])
     r64_w_game4 = sim_game(connecticut, iona, 64, points_dict, points_decided, [])
-    r64_w_game5 = sim_game(tcu, west_firstfour_11, 64, points_dict, points_decided, [])
+    r64_w_game5 = sim_game(tcu, west_firstfour_11[0], 64, points_dict, points_decided, [])
     r64_w_game6 = sim_game(gonzaga, grand_canyon, 64, points_dict, points_decided, [])
     r64_w_game7 = sim_game(northwestern, boise_state, 64, points_dict, points_decided, [])
     r64_w_game8 = sim_game(ucla, unc_asheville, 64, points_dict, points_decided, [])
 
     # Round of 32
-    r32_w_game1 = sim_game(r64_w_game1, r64_w_game2, 32, points_dict, points_decided, []) 
-    r32_w_game2 = sim_game(r64_w_game3, r64_w_game4, 32, points_dict, points_decided, []) 
-    r32_w_game3 = sim_game(r64_w_game5, r64_w_game6, 32, points_dict, points_decided, []) 
-    r32_w_game4 = sim_game(r64_w_game7, r64_w_game8, 32, points_dict, points_decided, []) 
+    r32_w_game1 = sim_game(r64_w_game1[0], r64_w_game2[0], 32, points_dict, points_decided, []) 
+    r32_w_game2 = sim_game(r64_w_game3[0], r64_w_game4[0], 32, points_dict, points_decided, []) 
+    r32_w_game3 = sim_game(r64_w_game5[0], r64_w_game6[0], 32, points_dict, points_decided, []) 
+    r32_w_game4 = sim_game(r64_w_game7[0], r64_w_game8[0], 32, points_dict, points_decided, []) 
 
     # Sweet 16
-    r16_w_game1 = sim_game(r32_w_game1, r32_w_game2, 16, points_dict, points_decided, [])
-    r16_w_game2 = sim_game(r32_w_game3, r32_w_game4, 16, points_dict, points_decided, [])
+    r16_w_game1 = sim_game(r32_w_game1[0], r32_w_game2[0], 16, points_dict, points_decided, [])
+    r16_w_game2 = sim_game(r32_w_game3[0], r32_w_game4[0], 16, points_dict, points_decided, [])
 
     # Elite 8
-    west_winner = sim_game(r16_w_game1, r16_w_game2, 8, points_dict, points_decided, [])
+    west_winner = sim_game(r16_w_game1[0], r16_w_game2[0], 8, points_dict, points_decided, [])
 
     ##### Midwest Region #####
     # Round of 64
@@ -151,29 +197,29 @@ def sim_tournament():
     r64_mw_game2 = sim_game(iowa, auburn, 64, points_dict, points_decided, [])
     r64_mw_game3 = sim_game(miami, drake, 64, points_dict, points_decided, [])
     r64_mw_game4 = sim_game(indiana, kent_state, 64, points_dict, points_decided, [])
-    r64_mw_game5 = sim_game(iowa_state, mw_firstfour_11, 64, points_dict, points_decided, [])
+    r64_mw_game5 = sim_game(iowa_state, mw_firstfour_11[0], 64, points_dict, points_decided, [])
     r64_mw_game6 = sim_game(xavier, kennesaw_state, 64, points_dict, points_decided, [])
     r64_mw_game7 = sim_game(texas_am, penn_state, 64, points_dict, points_decided, [])
     r64_mw_game8 = sim_game(texas, colgate, 64, points_dict, points_decided, [])
 
     # Round of 32
-    r32_mw_game1 = sim_game(r64_mw_game1, r64_mw_game2, 32, points_dict, points_decided, [])
-    r32_mw_game2 = sim_game(r64_mw_game3, r64_mw_game4, 32, points_dict, points_decided, [])
-    r32_mw_game3 = sim_game(r64_mw_game5, r64_mw_game6, 32, points_dict, points_decided, [])
-    r32_mw_game4 = sim_game(r64_mw_game7, r64_mw_game8, 32, points_dict, points_decided, [])
+    r32_mw_game1 = sim_game(r64_mw_game1[0], r64_mw_game2[0], 32, points_dict, points_decided, [])
+    r32_mw_game2 = sim_game(r64_mw_game3[0], r64_mw_game4[0], 32, points_dict, points_decided, [])
+    r32_mw_game3 = sim_game(r64_mw_game5[0], r64_mw_game6[0], 32, points_dict, points_decided, [])
+    r32_mw_game4 = sim_game(r64_mw_game7[0], r64_mw_game8[0], 32, points_dict, points_decided, [])
 
     # Sweet 16
-    r16_mw_game1 = sim_game(r32_mw_game1, r32_mw_game2, 16, points_dict, points_decided, [])
-    r16_mw_game2 = sim_game(r32_mw_game3, r32_mw_game4, 16, points_dict, points_decided, [])
+    r16_mw_game1 = sim_game(r32_mw_game1[0], r32_mw_game2[0], 16, points_dict, points_decided, [])
+    r16_mw_game2 = sim_game(r32_mw_game3[0], r32_mw_game4[0], 16, points_dict, points_decided, [])
 
     # Elite 8
-    midwest_winner = sim_game(r16_mw_game1, r16_mw_game2, 8, points_dict, points_decided, [])
+    midwest_winner = sim_game(r16_mw_game1[0], r16_mw_game2[0], 8, points_dict, points_decided, [])
 
 
     ##### East Region    #####
     # Round of 64
     # 2022
-    r64_e_game1 = sim_game(purdue, east_firstfour_16, 64, points_dict, points_decided, [])
+    r64_e_game1 = sim_game(purdue, east_firstfour_16[0], 64, points_dict, points_decided, [])
     r64_e_game2 = sim_game(memphis, florida_atlantic, 64, points_dict, points_decided, [])
     r64_e_game3 = sim_game(duke, oral_roberts, 64, points_dict, points_decided, [])
     r64_e_game4 = sim_game(tennessee, louisiana, 64, points_dict, points_decided, [])
@@ -183,22 +229,22 @@ def sim_tournament():
     r64_e_game8 = sim_game(marquette, vermont, 64, points_dict, points_decided, [])
 
     # Round of 32
-    r32_e_game1 = sim_game(r64_e_game1, r64_e_game2, 32, points_dict, points_decided, [])
-    r32_e_game2 = sim_game(r64_e_game3, r64_e_game4, 32, points_dict, points_decided, [])
-    r32_e_game3 = sim_game(r64_e_game5, r64_e_game6, 32, points_dict, points_decided, [])
-    r32_e_game4 = sim_game(r64_e_game7, r64_e_game8, 32, points_dict, points_decided, [])
+    r32_e_game1 = sim_game(r64_e_game1[0], r64_e_game2[0], 32, points_dict, points_decided, [])
+    r32_e_game2 = sim_game(r64_e_game3[0], r64_e_game4[0], 32, points_dict, points_decided, [])
+    r32_e_game3 = sim_game(r64_e_game5[0], r64_e_game6[0], 32, points_dict, points_decided, [])
+    r32_e_game4 = sim_game(r64_e_game7[0], r64_e_game8[0], 32, points_dict, points_decided, [])
 
     # Sweet 16
-    r16_e_game1 = sim_game(r32_e_game1, r32_e_game2, 16, points_dict, points_decided, [])
-    r16_e_game2 = sim_game(r32_e_game3, r32_e_game4, 16, points_dict, points_decided, [])
+    r16_e_game1 = sim_game(r32_e_game1[0], r32_e_game2[0], 16, points_dict, points_decided, [])
+    r16_e_game2 = sim_game(r32_e_game3[0], r32_e_game4[0], 16, points_dict, points_decided, [])
 
     # Elite 8
-    east_winner = sim_game(r16_e_game1, r16_e_game2, 8, points_dict, points_decided, [])
+    east_winner = sim_game(r16_e_game1[0], r16_e_game2[0], 8, points_dict, points_decided, [])
 
     ##### South Region   #####
     # Round of 64
     # 2022
-    r64_s_game1 = sim_game(alabama, south_firstfour_16, 64, points_dict, points_decided, [])
+    r64_s_game1 = sim_game(alabama, south_firstfour_16[0], 64, points_dict, points_decided, [])
     r64_s_game2 = sim_game(maryland, west_virginia, 64, points_dict, points_decided, [])
     r64_s_game3 = sim_game(san_diego_state, charleston, 64, points_dict, points_decided, [])
     r64_s_game4 = sim_game(virginia, furman, 64, points_dict, points_decided, [])
@@ -208,25 +254,62 @@ def sim_tournament():
     r64_s_game8 = sim_game(arizona, princeton, 64, points_dict, points_decided, [])
 
     # Round of 32
-    r32_s_game1 = sim_game(r64_s_game1, r64_s_game2, 32, points_dict, points_decided, [])
-    r32_s_game2 = sim_game(r64_s_game3, r64_s_game4, 32, points_dict, points_decided, [])
-    r32_s_game3 = sim_game(r64_s_game5, r64_s_game6, 32, points_dict, points_decided, [])
-    r32_s_game4 = sim_game(r64_s_game7, r64_s_game8, 32, points_dict, points_decided, [])
+    r32_s_game1 = sim_game(r64_s_game1[0], r64_s_game2[0], 32, points_dict, points_decided, [])
+    r32_s_game2 = sim_game(r64_s_game3[0], r64_s_game4[0], 32, points_dict, points_decided, [])
+    r32_s_game3 = sim_game(r64_s_game5[0], r64_s_game6[0], 32, points_dict, points_decided, [])
+    r32_s_game4 = sim_game(r64_s_game7[0], r64_s_game8[0], 32, points_dict, points_decided, [])
 
     # Sweet 16
-    r16_s_game1 = sim_game(r32_s_game1, r32_s_game2, 16, points_dict, points_decided, [])
-    r16_s_game2 = sim_game(r32_s_game3, r32_s_game4, 16, points_dict, points_decided, [])
+    r16_s_game1 = sim_game(r32_s_game1[0], r32_s_game2[0], 16, points_dict, points_decided, [])
+    r16_s_game2 = sim_game(r32_s_game3[0], r32_s_game4[0], 16, points_dict, points_decided, [])
 
     # Elite 8
-    south_winner = sim_game(r16_s_game1, r16_s_game2, 8, points_dict, points_decided, [])
+    south_winner = sim_game(r16_s_game1[0], r16_s_game2[0], 8, points_dict, points_decided, [])
 
     # Final Four
-    east_west_winner = sim_game(east_winner, west_winner, 4, points_dict, points_decided, [])
-    south_midwest_winner = sim_game(south_winner, midwest_winner, 4, points_dict, points_decided, [])
+    south_east_winner = sim_game(south_winner[0], east_winner[0], 4, points_dict, points_decided, [])
+    west_midwest_winner = sim_game(west_winner[0], midwest_winner[0], 4, points_dict, points_decided, [])
 
     # Championship
-    champion = sim_game(east_west_winner, south_midwest_winner, 2, points_dict, points_decided, [])
-    champion.championships += 1
+    champion = sim_game(south_east_winner[0], west_midwest_winner[0], 2, points_dict, points_decided, [])
+    champion[0].championships += 1
+
+    #create list of all players
+    for player in points_dict:
+        # if player has max points, change win[player] to 1
+        if points_dict[player] == max(points_dict.values()):
+            wins[player] += 1
+        
+    # add row to march_madness_pre.db
+    conn = sqlite3.connect('march_madness_pre.db')
+    c = conn.cursor()
+    string = (f'''INSERT INTO march_madness_pre VALUES (
+            {wins["Devan"]}, {wins["Jeremy"]}, {wins["Josh"]}, {wins["Justin"]}, {wins["Brant"]}, {wins["Nick"]}, {wins["Joe"]},
+            {points_dict["Devan"]}, {points_dict["Jeremy"]}, {points_dict["Josh"]}, {points_dict["Justin"]}, {points_dict["Brant"]}, {points_dict["Nick"]}, {points_dict["Joe"]},
+              "{mw_firstfour_11[0].name}", {mw_firstfour_11[1]}, "{west_firstfour_11[0].name}", {west_firstfour_11[1]}, "{south_firstfour_16[0].name}", {south_firstfour_16[1]}, "{east_firstfour_16[0].name}", {east_firstfour_16[1]},
+              "{r64_w_game1[0].name}", {r64_w_game1[1]}, "{r64_w_game2[0].name}", {r64_w_game2[1]}, "{r64_w_game3[0].name}", {r64_w_game3[1]}, "{r64_w_game4[0].name}", {r64_w_game4[1]}, "{r64_w_game5[0].name}", {r64_w_game5[1]}, "{r64_w_game6[0].name}", {r64_w_game6[1]}, "{r64_w_game7[0].name}", {r64_w_game7[1]}, "{r64_w_game8[0].name}", {r64_w_game8[1]},
+              "{r64_mw_game1[0].name}", {r64_mw_game1[1]}, "{r64_mw_game2[0].name}", {r64_mw_game2[1]}, "{r64_mw_game3[0].name}", {r64_mw_game3[1]}, "{r64_mw_game4[0].name}", {r64_mw_game4[1]}, "{r64_mw_game5[0].name}", {r64_mw_game5[1]}, "{r64_mw_game6[0].name}", {r64_mw_game6[1]}, "{r64_mw_game7[0].name}", {r64_mw_game7[1]}, "{r64_mw_game8[0].name}", {r64_mw_game8[1]},
+              "{r64_e_game1[0].name}", {r64_e_game1[1]}, "{r64_e_game2[0].name}", {r64_e_game2[1]}, "{r64_e_game3[0].name}", {r64_e_game3[1]}, "{r64_e_game4[0].name}", {r64_e_game4[1]}, "{r64_e_game5[0].name}", {r64_e_game5[1]}, "{r64_e_game6[0].name}", {r64_e_game6[1]}, "{r64_e_game7[0].name}", {r64_e_game7[1]}, "{r64_e_game8[0].name}", {r64_e_game8[1]},
+                "{r64_s_game1[0].name}", {r64_s_game1[1]}, "{r64_s_game2[0].name}", {r64_s_game2[1]}, "{r64_s_game3[0].name}", {r64_s_game3[1]}, "{r64_s_game4[0].name}", {r64_s_game4[1]}, "{r64_s_game5[0].name}", {r64_s_game5[1]}, "{r64_s_game6[0].name}", {r64_s_game6[1]}, "{r64_s_game7[0].name}", {r64_s_game7[1]}, "{r64_s_game8[0].name}", {r64_s_game8[1]},
+                "{r32_w_game1[0].name}", {r32_w_game1[1]}, "{r32_w_game2[0].name}", {r32_w_game2[1]}, "{r32_w_game3[0].name}", {r32_w_game3[1]}, "{r32_w_game4[0].name}", {r32_w_game4[1]},
+                "{r32_mw_game1[0].name}", {r32_mw_game1[1]}, "{r32_mw_game2[0].name}", {r32_mw_game2[1]}, "{r32_mw_game3[0].name}", {r32_mw_game3[1]}, "{r32_mw_game4[0].name}", {r32_mw_game4[1]},
+                "{r32_e_game1[0].name}", {r32_e_game1[1]}, "{r32_e_game2[0].name}", {r32_e_game2[1]}, "{r32_e_game3[0].name}", {r32_e_game3[1]}, "{r32_e_game4[0].name}", {r32_e_game4[1]},
+                "{r32_s_game1[0].name}", {r32_s_game1[1]}, "{r32_s_game2[0].name}", {r32_s_game2[1]}, "{r32_s_game3[0].name}", {r32_s_game3[1]}, "{r32_s_game4[0].name}", {r32_s_game4[1]},
+                "{r16_w_game1[0].name}", {r16_w_game1[1]}, "{r16_w_game2[0].name}", {r16_w_game2[1]},
+                "{r16_mw_game1[0].name}", {r16_mw_game1[1]}, "{r16_mw_game2[0].name}", {r16_mw_game2[1]},
+                "{r16_e_game1[0].name}", {r16_e_game1[1]}, "{r16_e_game2[0].name}", {r16_e_game2[1]},
+                "{r16_s_game1[0].name}", {r16_s_game1[1]}, "{r16_s_game2[0].name}", {r16_s_game2[1]},
+                "{west_winner[0].name}", {west_winner[1]},
+                "{midwest_winner[0].name}", {midwest_winner[1]},
+                "{east_winner[0].name}", {east_winner[1]},
+                "{south_winner[0].name}", {south_winner[1]},
+                "{south_east_winner[0].name}", {south_east_winner[1]},
+                "{west_midwest_winner[0].name}", {west_midwest_winner[1]},
+                "{champion[0].name}", {champion[1]})''')
+    conn.execute(string)           
+    conn.commit()
+    conn.close()
+
 
     return points_dict, points_decided
 
@@ -246,6 +329,8 @@ points_decided = {}
 
 def sim_many_tournaments(num_sims):
     for _ in range(num_sims):
+        if(_ % 1000 == 0):
+            print("Simulating tournament", _)
         points, points_decided = sim_tournament()
 
         Devan.append(points["Devan"])
