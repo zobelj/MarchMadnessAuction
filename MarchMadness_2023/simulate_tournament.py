@@ -209,11 +209,11 @@ def sim_tournament():
     south_winner = sim_game(r16_s_game1, r16_s_game2, 8, points_dict, points_decided, [])
 
     # Final Four
-    east_west_winner = sim_game(east_winner, west_winner, 4, points_dict, points_decided, [])
-    south_midwest_winner = sim_game(south_winner, midwest_winner, 4, points_dict, points_decided, [])
+    south_east_winner = sim_game(south_winner, east_winner, 4, points_dict, points_decided, [])
+    west_midwest_winner = sim_game(west_winner, midwest_winner, 4, points_dict, points_decided, [])
 
     # Championship
-    champion = sim_game(east_west_winner, south_midwest_winner, 2, points_dict, points_decided, [])
+    champion = sim_game(south_east_winner, west_midwest_winner, 2, points_dict, points_decided, [])
     champion.championships += 1
 
     return points_dict, points_decided
@@ -278,9 +278,9 @@ if(var(Josh)):
     sns.kdeplot(Josh, linewidth=THICKNESS, color="tab:green")
     legend_list.append("Josh:    {0}%".format(num_wins["Josh"]))
 
-if(var(Justin)):
-    sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
-    legend_list.append("Justin:  {0}%".format(num_wins["Justin"]))
+# if(var(Justin)):
+#     sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
+#     legend_list.append("Justin:  {0}%".format(num_wins["Justin"]))
 
 # Brant's odds are < 1%
 # if(var(Brant)):
