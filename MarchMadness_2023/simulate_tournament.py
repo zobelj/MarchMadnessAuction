@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 from numpy import random, mean, var
 import math
 import sqlite3
-
+import random as rd
+import string as str
 # import team objects
 from teams import *
 
@@ -21,9 +22,11 @@ def create_database(drop_existing=False):
     
     if(drop_existing):
         c.execute("DROP TABLE IF EXISTS march_madness")
+        c.execute("DROP TABLE IF EXISTS march_madness_team_pts")
     # Create table
     c.execute('''CREATE TABLE IF NOT EXISTS march_madness
-                    (Devan_win integer, Jeremy_win integer, Josh_win integer, Justin_win integer, Brant_win integer, Nick_win integer, Joe_win integer,
+                    (sim_id text PRIMARY KEY,
+                    Devan_win integer, Jeremy_win integer, Josh_win integer, Justin_win integer, Brant_win integer, Nick_win integer, Joe_win integer,
                         Devan_pts integer, Jeremy_pts integer, Josh_pts integer, Justin_pts integer, Brant_pts integer, Nick_pts integer, Joe_pts integer,
                  mw_firstfour_11 text, mw_firstfour_11_blowout integer, west_firstfour_11 text, west_firstfour_11_blowout integer,
                  east_firstfour_16 text, east_firstfour_16_blowout integer, south_firstfour_16 text, south_firstfour_16_blowout integer,
@@ -44,7 +47,20 @@ def create_database(drop_existing=False):
                 west_winner text, west_winner_blowout integer, midwest_winner text, midwest_winner_blowout integer, east_winner text, east_winner_blowout integer, south_winner text, south_winner_blowout integer,
                 south_east_winner text, south_east_winner_blowout integer, west_midwest_winner text, west_midwest_winner_blowout integer,
                 final_winner text, final_winner_blowout integer)''')
-                 
+    c.execute('''CREATE TABLE IF NOT EXISTS march_madness_team_pts
+                    (sim_id text PRIMARY KEY,
+                        mississippi_state_pts integer, pittsburgh_pts integer, arizona_state_pts integer, nevada_pts integer,
+                        texas_southern_pts integer, fairleigh_dickinson_pts integer, texas_am_corpus_christi_pts integer, southeast_missouri_state_pts integer,
+                        kansas_pts integer, howard_pts integer, arkansas_pts integer, illinois_pts integer, saint_marys_pts integer, vcu_pts integer, connecticut_pts integer, iona_pts integer,
+                        tcu_pts integer, gonzaga_pts integer, grand_canyon_pts integer, northwestern_pts integer, boise_state_pts integer, ucla_pts integer, unc_asheville_pts integer,
+                        houston_pts integer, northern_kentucky_pts integer, iowa_pts integer, auburn_pts integer, miami_pts integer, drake_pts integer, indiana_pts integer, kent_state_pts integer,
+                        iowa_state_pts integer, xavier_pts integer, kennesaw_state_pts integer, texas_am_pts integer, penn_state_pts integer, texas_pts integer, colgate_pts integer,
+                        purdue_pts integer, memphis_pts integer, florida_atlantic_pts integer, duke_pts integer, oral_roberts_pts integer, tennessee_pts integer, louisiana_pts integer,
+                        kentucky_pts integer, providence_pts integer, kansas_state_pts integer, montana_state_pts integer, michigan_state_pts integer, usc_pts integer, marquette_pts integer, vermont_pts integer,
+                        alabama_pts integer, maryland_pts integer, west_virginia_pts integer, san_diego_state_pts integer, charleston_pts integer, virginia_pts integer, furman_pts integer,
+                        creighton_pts integer, north_carolina_state_pts integer, baylor_pts integer, uc_santa_barbara_pts integer, missouri_pts integer, utah_state_pts integer, arizona_pts integer, princeton_pts integer)
+                        
+                        ''') 
                  
                  
 
@@ -98,10 +114,11 @@ def sim_game(team1, team2, round, points_dict, points_decided, force):
         if(winner.seed > loser.seed):
             points_dict[winner.owner] += round_to_points[round] + 2 + force - 1
             points_decided[winner.owner] += round_to_points[round] + 2 + force - 1
+            winner.pts += round_to_points[round] + 2 + force - 1
         else:
             points_dict[winner.owner] += round_to_points[round] + force - 1
             points_decided[winner.owner] += round_to_points[round] + force - 1
-
+            winner.pts += round_to_points[round] + force - 1
     return winner, blowout_pts
 
 # This function is based on a logistic regression model
@@ -143,13 +160,18 @@ headliner = "Gonzaga beats TCU"
 i = 53
 
 #########################################################################################################
-create_database(True)
+create_database()
 
 def sim_tournament():
 
+    sim_id = ''.join(rd.choices(str.ascii_uppercase + str.digits, k=10))
     points_dict = {"Devan": 0, "Jeremy": 0, "Josh": 0, "Justin": 0, "Brant": 0, "Nick": 0, "Joe": 0}
     points_decided = {"Devan": 0, "Jeremy": 0, "Josh": 0, "Justin": 0, "Brant": 0, "Nick": 0, "Joe": 0}
     wins = {"Devan": 0, "Jeremy": 0, "Josh": 0, "Justin": 0, "Brant": 0, "Nick": 0, "Joe": 0}
+
+    #for team in team_list, reset pts to 0
+    for team in team_list:
+        team.pts = 0
 
     # First Four
     # 2023
@@ -157,7 +179,7 @@ def sim_tournament():
     west_firstfour_11  = sim_game(arizona_state, nevada, -1, points_dict, points_decided, [3, 0])
     east_firstfour_16  = sim_game(texas_southern, fairleigh_dickinson, -1, points_dict, points_decided, [0,3])
     south_firstfour_16 = sim_game(texas_am_corpus_christi, southeast_missouri_state, -1, points_dict, points_decided, [1,0])
-
+    
 
     #####  West Region  #####
     # Round of 64
@@ -221,7 +243,6 @@ def sim_tournament():
     r64_e_game6 = sim_game(kansas_state, montana_state, 64, points_dict, points_decided, [2,0])
     r64_e_game7 = sim_game(michigan_state, usc, 64, points_dict, points_decided, [2,0])
     r64_e_game8 = sim_game(marquette, vermont, 64, points_dict, points_decided, [2,0])
-
     # Round of 32
     r32_e_game1 = sim_game(r64_e_game1[0], r64_e_game2[0], 32, points_dict, points_decided, [0,1]) # Fairleigh Dickinson vs Florida Atlantic
     r32_e_game2 = sim_game(r64_e_game3[0], r64_e_game4[0], 32, points_dict, points_decided, [0,2]) # Duke vs Tennessee
@@ -279,6 +300,7 @@ def sim_tournament():
     conn = sqlite3.connect('march_madness.db')
     c = conn.cursor()
     string = (f'''INSERT INTO march_madness VALUES (
+            '{sim_id}', 
             {wins["Devan"]}, {wins["Jeremy"]}, {wins["Josh"]}, {wins["Justin"]}, {wins["Brant"]}, {wins["Nick"]}, {wins["Joe"]},
             {points_dict["Devan"]}, {points_dict["Jeremy"]}, {points_dict["Josh"]}, {points_dict["Justin"]}, {points_dict["Brant"]}, {points_dict["Nick"]}, {points_dict["Joe"]},
               "{mw_firstfour_11[0].name}", {mw_firstfour_11[1]}, "{west_firstfour_11[0].name}", {west_firstfour_11[1]}, "{south_firstfour_16[0].name}", {south_firstfour_16[1]}, "{east_firstfour_16[0].name}", {east_firstfour_16[1]},
@@ -301,7 +323,22 @@ def sim_tournament():
                 "{south_east_winner[0].name}", {south_east_winner[1]},
                 "{west_midwest_winner[0].name}", {west_midwest_winner[1]},
                 "{champion[0].name}", {champion[1]})''')
-    conn.execute(string)           
+    
+    string_2 = (f'''INSERT INTO march_madness_team_pts VALUES(
+                '{sim_id}',
+                {mississippi_state.pts}, {pittsburgh.pts}, {arizona_state.pts}, {nevada.pts},
+                {texas_southern.pts}, {fairleigh_dickinson.pts}, {texas_am_corpus_christi.pts}, {southeast_missouri_state.pts},
+                {kansas.pts}, {howard.pts}, {arkansas.pts}, {illinois.pts}, {saint_marys.pts}, {vcu.pts}, {connecticut.pts}, {iona.pts},
+                {tcu.pts}, {gonzaga.pts}, {grand_canyon.pts}, {northwestern.pts}, {boise_state.pts}, {ucla.pts}, {unc_asheville.pts},
+                {houston.pts}, {northern_kentucky.pts}, {iowa.pts}, {auburn.pts}, {miami.pts}, {drake.pts}, {indiana.pts}, {kent_state.pts},
+                {iowa_state.pts}, {xavier.pts}, {kennesaw_state.pts}, {texas_am.pts}, {penn_state.pts}, {texas.pts}, {colgate.pts},
+                {purdue.pts}, {memphis.pts}, {florida_atlantic.pts}, {duke.pts}, {oral_roberts.pts}, {tennessee.pts}, {louisiana.pts},
+                {kentucky.pts}, {providence.pts}, {kansas_state.pts}, {montana_state.pts}, {michigan_state.pts}, {usc.pts}, {marquette.pts}, {vermont.pts},
+                {alabama.pts}, {maryland.pts}, {west_virginia.pts}, {san_diego_state.pts}, {charleston.pts}, {virginia.pts}, {furman.pts},
+                {creighton.pts}, {north_carolina_state.pts}, {baylor.pts}, {uc_santa_barbara.pts}, {missouri.pts}, {utah_state.pts}, {arizona.pts}, {princeton.pts})''')
+
+    conn.execute(string)   
+    conn.execute(string_2)        
     conn.commit()
     conn.close()
 
