@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-
-import seaborn as sns
-import matplotlib.pyplot as plt
 from numpy import var
 import random as rd
 import string as str
 
 from lib.teams import *
 from lib.database import create_database, run_query
-from lib.simulate import sim_game
+from lib.simulate import sim_game, sim_many_tournaments
 from lib.graphs import density_plot
 
 DB_PATH = 'lib/march_madness.db'
@@ -197,56 +194,6 @@ def sim_tournament():
     
     return points_dict, points_decided
 
-# list points scored in each tourney simulation
-points_lists = {
-    "Devan": [],
-    "Jeremy": [],
-    "Josh": [],
-    "Justin": [],
-    "Brant": [],
-    "Nick": [],
-    "Joe": []
-}
-points_decided = {}
-win_pct = []
 
-def sim_many_tournaments(num_sims):
-    global win_pct
-    for _ in range(num_sims):
-        if _ % 1000 == 0:
-            print(f"Simulating tournament {_} of {num_sims}...")
-        points, points_decided = sim_tournament()
-
-        points_lists["Devan"].append(points["Devan"])
-        points_lists["Brant"].append(points["Brant"])
-        points_lists["Jeremy"].append(points["Jeremy"])
-        points_lists["Josh"].append(points["Josh"])
-        points_lists["Justin"].append(points["Justin"])
-        points_lists["Nick"].append(points["Nick"])
-        points_lists["Joe"].append(points["Joe"])
-
-    # get the average points scored by each player from the database
-    avg_points = run_query('''SELECT ROUND(AVG(Devan_pts), 2) as Devan_avg_pts,
-                        ROUND(AVG(Jeremy_pts), 2) as Jeremy_avg_pts,
-                        ROUND(AVG(Josh_pts), 2) as Josh_avg_pts,
-                        ROUND(AVG(Justin_pts), 2) as Justin_avg_pts,
-                        ROUND(AVG(Nick_pts), 2) as Nick_avg_pts,
-                        ROUND(AVG(Joe_pts), 2) as Joe_avg_pts
-                    FROM march_madness''', fetch="one")
-    
-    # convert DB results into python dictionaries
-    avg_points = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], avg_points))
-    win_pct = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], win_pct))
-
-    print("<--- Expected win percentages --->")
-    print(win_pct)
-
-    print("<--- Decided points --->")
-    print(points_decided)
-
-    print("<--- Average points scored --->")
-    print(avg_points)
-
-
-sim_many_tournaments(10_000)
+points_lists = sim_many_tournaments(10_000, sim_tournament)
 density_plot(points_lists, headliner, i)

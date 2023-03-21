@@ -1,6 +1,8 @@
 import math
 import random
 
+from lib.database import run_query
+
 # constants
 pyth_exponent = 11.5
 round_to_points = {64: 1, 32: 2, 16: 3, 8: 4, 4: 5, 2: 10, -1: 0}
@@ -89,3 +91,49 @@ def blowout(winner, loser):
     blowout_pts += 1
 
     return blowout_pts
+
+
+def sim_many_tournaments(num_sims, sim_tournament):
+    points_lists = {
+        "Devan": [],
+        "Jeremy": [],
+        "Josh": [],
+        "Justin": [],
+        "Brant": [],
+        "Nick": [],
+        "Joe": []
+    }
+
+    for _ in range(num_sims):
+        if _ % 1000 == 0:
+            print(f"Simulating tournament {_} of {num_sims}...")
+        points, points_decided = sim_tournament()
+
+        points_lists["Devan"].append(points["Devan"])
+        points_lists["Brant"].append(points["Brant"])
+        points_lists["Jeremy"].append(points["Jeremy"])
+        points_lists["Josh"].append(points["Josh"])
+        points_lists["Justin"].append(points["Justin"])
+        points_lists["Nick"].append(points["Nick"])
+        points_lists["Joe"].append(points["Joe"])
+
+    # get the average points scored by each player from the database
+    avg_points = run_query('''SELECT ROUND(AVG(Devan_pts), 2) as Devan_avg_pts,
+                        ROUND(AVG(Jeremy_pts), 2) as Jeremy_avg_pts,
+                        ROUND(AVG(Josh_pts), 2) as Josh_avg_pts,
+                        ROUND(AVG(Justin_pts), 2) as Justin_avg_pts,
+                        ROUND(AVG(Nick_pts), 2) as Nick_avg_pts,
+                        ROUND(AVG(Joe_pts), 2) as Joe_avg_pts
+                    FROM march_madness''', fetch="one")
+    
+    # convert DB results into python dictionaries
+    avg_points = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], avg_points))
+
+    print("<--- Decided points --->")
+    print(points_decided)
+
+    print("<--- Average points scored --->")
+    print(avg_points)
+
+    return points_lists
+
