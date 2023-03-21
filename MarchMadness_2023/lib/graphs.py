@@ -31,15 +31,17 @@ def violin_plot(school_version = False, pre_tourney = False, i = 0):
     plt.show()
 
 
-def density_plot(points_lists, headliner, i):
+def density_plot(points_lists, headliner, i, is_pre=False):
+    tourney_table = 'tourney_results_pre' if is_pre else 'tourney_results'
+
     # get the win percentage for each player from the database
-    win_pcts = run_query('''SELECT (ROUND(100 * AVG(Devan_win), 2) || '%') as Devan_win_pct,
+    win_pcts = run_query(f'''SELECT (ROUND(100 * AVG(Devan_win), 2) || '%') as Devan_win_pct,
                         (ROUND(100 * AVG(Jeremy_win), 2) || '%') as Jeremy_win_pct,
                         (ROUND(100 * AVG(Josh_win), 2) || '%') as Josh_win_pct,
                         (ROUND(100 * AVG(Justin_win), 2) || '%') as Justin_win_pct,
                         (ROUND(100 * AVG(Nick_win), 2) || '%') as Nick_win_pct,
                         (ROUND(100 * AVG(Joe_win), 2) || '%') as Joe_win_pct
-                    FROM tourney_results''', fetch="one")
+                    FROM {tourney_table}''', fetch="one")
 
     # convert win_pcts to a dictionary
     win_pcts = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], win_pcts))
