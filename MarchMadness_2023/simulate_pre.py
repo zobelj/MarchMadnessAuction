@@ -4,13 +4,13 @@ import random as rd
 import string as str
 
 from lib.teams import *
-from lib.database import create_tables, run_query
+from lib.database import create_pre_tables, run_query
 from lib.simulate import sim_game, sim_many_tournaments
 from lib.graphs import density_plot
 
 #########################################################################################################
-headliner = "Gonzaga beats TCU"
-i = 53
+headliner = "Pre-Tournament"
+i = 0
 #########################################################################################################
 
 def sim_tournament():
@@ -192,5 +192,6 @@ def sim_tournament():
 
 
 if __name__ == '__main__':
-    points_lists = sim_many_tournaments(10_00, sim_tournament)
-    density_plot(points_lists, headliner, i)
+    create_pre_tables(True)
+    points_lists = sim_many_tournaments(10_000, sim_tournament, is_pre=True)
+    density_plot(points_lists, headliner, i, is_pre=True)

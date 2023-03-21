@@ -93,7 +93,9 @@ def blowout(winner, loser):
     return blowout_pts
 
 
-def sim_many_tournaments(num_sims, sim_tournament):
+def sim_many_tournaments(num_sims, sim_tournament, is_pre=False):
+    tourney_table = 'tourney_results_pre' if is_pre else 'tourney_results'
+
     points_lists = {
         "Devan": [],
         "Jeremy": [],
@@ -118,13 +120,13 @@ def sim_many_tournaments(num_sims, sim_tournament):
         points_lists["Joe"].append(points["Joe"])
 
     # get the average points scored by each player from the database
-    avg_points = run_query('''SELECT ROUND(AVG(Devan_pts), 2) as Devan_avg_pts,
+    avg_points = run_query(f'''SELECT ROUND(AVG(Devan_pts), 2) as Devan_avg_pts,
                         ROUND(AVG(Jeremy_pts), 2) as Jeremy_avg_pts,
                         ROUND(AVG(Josh_pts), 2) as Josh_avg_pts,
                         ROUND(AVG(Justin_pts), 2) as Justin_avg_pts,
                         ROUND(AVG(Nick_pts), 2) as Nick_avg_pts,
                         ROUND(AVG(Joe_pts), 2) as Joe_avg_pts
-                    FROM tourney_results''', fetch="one")
+                    FROM {tourney_table}''', fetch="one")
     
     # convert DB results into python dictionaries
     avg_points = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], avg_points))
