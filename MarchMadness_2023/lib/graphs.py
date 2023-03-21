@@ -5,8 +5,8 @@ import seaborn as sns
 import pandas as pd
 import sqlite3
 
-from teams import *
-from database import run_query
+from lib.teams import *
+from lib.database import run_query
 
 def violin_plot():
     conn = sqlite3.connect('march_madness.db')
@@ -44,6 +44,9 @@ def density_plot(points_lists, headliner, i):
                         (ROUND(100 * AVG(Nick_win), 2) || '%') as Nick_win_pct,
                         (ROUND(100 * AVG(Joe_win), 2) || '%') as Joe_win_pct
                     FROM march_madness''', fetch="one")
+
+    # convert win_pcts to a dictionary
+    win_pcts = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], win_pcts))
 
     # plot density function for owners with non-zero variance
     legend_list = []
@@ -92,7 +95,7 @@ def density_plot(points_lists, headliner, i):
     plt.ylabel("")
     plt.yticks([])
     plt.legend(legend_list)
-    plt.savefig(f"../mm_figs/mm_{i}.png", dpi=300)
-    #plt.show()
+    plt.savefig(f"mm_figs/mm_{i}.png", dpi=300)
+    plt.show()
 
 
