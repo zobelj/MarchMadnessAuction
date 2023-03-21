@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
-
-import seaborn as sns
-import matplotlib.pyplot as plt
 from numpy import var
 import random as rd
 import string as str
 
 from lib.teams import *
 from lib.database import create_database, run_query
-from lib.simulate import sim_game
+from lib.simulate import sim_game, sim_many_tournaments
+from lib.graphs import density_plot
 
 DB_PATH = 'lib/march_madness.db'
 
@@ -196,103 +194,6 @@ def sim_tournament():
     
     return points_dict, points_decided
 
-# list points scored in each tourney simulation
-Devan = []
-Jeremy = []
-Josh = []
-Justin = []
-Brant = []
-Nick = []
-Joe = []
-points_decided = {}
-win_pct = []
 
-def sim_many_tournaments(num_sims):
-    global win_pct
-    for _ in range(num_sims):
-        if _ % 1000 == 0:
-            print(f"Simulating tournament {_} of {num_sims}...")
-        points, points_decided = sim_tournament()
-
-        Devan.append(points["Devan"])
-        Brant.append(points["Brant"])
-        Jeremy.append(points["Jeremy"])
-        Josh.append(points["Josh"])
-        Justin.append(points["Justin"])
-        Nick.append(points["Nick"])
-        Joe.append(points["Joe"])
-
-    # get the average points scored by each player from the database
-    avg_points = run_query('''SELECT ROUND(AVG(Devan_pts), 2) as Devan_avg_pts,
-                        ROUND(AVG(Jeremy_pts), 2) as Jeremy_avg_pts,
-                        ROUND(AVG(Josh_pts), 2) as Josh_avg_pts,
-                        ROUND(AVG(Justin_pts), 2) as Justin_avg_pts,
-                        ROUND(AVG(Nick_pts), 2) as Nick_avg_pts,
-                        ROUND(AVG(Joe_pts), 2) as Joe_avg_pts
-                    FROM march_madness''', fetch="one")
-    
-    # get the win percentage for each player from the database
-    win_pct = run_query('''SELECT (ROUND(100 * AVG(Devan_win), 2) || '%') as Devan_win_pct,
-                        (ROUND(100 * AVG(Jeremy_win), 2) || '%') as Jeremy_win_pct,
-                        (ROUND(100 * AVG(Josh_win), 2) || '%') as Josh_win_pct,
-                        (ROUND(100 * AVG(Justin_win), 2) || '%') as Justin_win_pct,
-                        (ROUND(100 * AVG(Nick_win), 2) || '%') as Nick_win_pct,
-                        (ROUND(100 * AVG(Joe_win), 2) || '%') as Joe_win_pct
-                    FROM march_madness''', fetch="one")
-
-    # convert DB results into python dictionaries
-    avg_points = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], avg_points))
-    win_pct = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], win_pct))
-
-    print("<--- Expected win percentages --->")
-    print(win_pct)
-
-    print("<--- Decided points --->")
-    print(points_decided)
-
-    print("<--- Average points scored --->")
-    print(avg_points)
-
-
-sim_many_tournaments(10_000)
-# plot density function for owners with non-zero variance
-legend_list = []
-THICKNESS = 2.5
-
-if(var(Devan)):
-    sns.kdeplot(Devan, linewidth=THICKNESS, color="tab:blue")
-    legend_list.append(f"Jeremy:  {win_pct['Devan']}")
-
-if(var(Jeremy)):
-    sns.kdeplot(Jeremy, linewidth=THICKNESS, color="tab:orange")
-    legend_list.append(f"Jeremy:  {win_pct['Jeremy']}")
-
-if(var(Josh)):
-    sns.kdeplot(Josh, linewidth=THICKNESS, color="tab:green")
-    legend_list.append(f"Jeremy:  {win_pct['Josh']}")
-
-# if(var(Justin)):
-#     sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
-#     legend_list.append(f"Jeremy:  {win_pct['Justin']}")
-
-# Brant's odds are < 1%
-# if(var(Brant)):
-#     sns.kdeplot(Brant, linewidth=THICKNESS, color="tab:purple")
-#     legend_list.append(f"Jeremy:  {win_pct['Brant']}")
-
-if(var(Nick)):
-    sns.kdeplot(Nick, linewidth=THICKNESS, color="tab:brown")
-    legend_list.append(f"Jeremy:  {win_pct['Nick']}")
-
-if(var(Joe)):
-    sns.kdeplot(Joe, linewidth=THICKNESS, color="tab:pink")
-    legend_list.append(f"Jeremy:  {win_pct['Joe']}")
-
-# configure and display plot
-plt.title(headliner)
-plt.xlabel("Points")
-plt.ylabel("")
-plt.yticks([])
-plt.legend(legend_list)
-plt.savefig(f"./mm_figs/mm_{i}.png", dpi=300)
-#plt.show()
+points_lists = sim_many_tournaments(10_000, sim_tournament)
+density_plot(points_lists, headliner, i)

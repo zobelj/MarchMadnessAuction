@@ -7,6 +7,7 @@ def create_database(drop_existing=False):
     c = conn.cursor()
     
     if(drop_existing):
+        print("Dropping existing table march_madness...")
         c.execute("DROP TABLE IF EXISTS march_madness")
         c.execute("DROP TABLE IF EXISTS march_madness_team_pts")
     # Create table
@@ -68,7 +69,6 @@ def run_query(query, fetch=None):
     if fetch == "all":
         return c.fetchall()
     elif fetch == "one":
-        print("fetching one")
         return c.fetchone()
     
     conn.commit()
