@@ -8,18 +8,22 @@ import sqlite3
 from lib.teams import *
 from lib.database import run_query
 
-def violin_plot(school_version = False, pre_tourney = False, i = 0):
-    conn = sqlite3.connect('march_madness.db')
-    c = conn.cursor()
-    select_portion = ""
+def violin_plot(school_version = False, i=0, is_pre=False):
+    # build query
+    tourney_table = 'tourney_results_pre' if is_pre else 'tourney_results'
+    schools_table = 'schools_pts_pre' if is_pre else 'schools_pts'
+
     if not school_version:
-        select_portion = "SELECT Devan_pts, Jeremy_pts, Josh_pts, Justin_pts, Brant_pts, Nick_pts, Joe_pts FROM tourney_results"
+        query = f"SELECT Devan_pts, Jeremy_pts, Josh_pts, Justin_pts, Brant_pts, Nick_pts, Joe_pts FROM {tourney_table}"
+        outfile = f"violin_figs/violin_school_{'pre' if is_pre else f'{i}'}.png"
     else: 
-        select_portion = "SELECT * from schools_points"
-    if pre_tourney:
-        select_portion += "_pre"
-    df = pd.read_sql_query(select_portion, conn)
-    #change column names to get rid of the _pts part at the end of each one
+        query = f"SELECT * from {schools_table}"
+        outfile = f"violin_figs/violin_tourney_{'pre' if is_pre else f'{i}'}.png" 
+
+    # execute query
+    df = run_query(query, fetch="sql")
+
+    # change column names to get rid of the _pts part at the end of each one
     for column in df.columns:
         df.rename(columns={column: column[:-4]}, inplace=True)
     #order the columns of the df in order of mean
@@ -27,7 +31,7 @@ def violin_plot(school_version = False, pre_tourney = False, i = 0):
     sns.violinplot(data=df, inner="quartile", scale = "count", cut = 0, orient = "h", bw=.2, width = 1)
     plt.subplots_adjust(left=0.2, right=0.9, top=0.9, bottom=0.1, hspace = 0.5)
     plt.xticks(fontsize=20)
-    plt.savefig(f"violin_figs/violin_{'school' if school_version else 'tourney'}_{'pre ' if pre_tourney else ''}_{i}.png")
+    plt.savefig(outfile)
     plt.show()
 
 
