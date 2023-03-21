@@ -8,14 +8,10 @@ from lib.database import create_database, run_query
 from lib.simulate import sim_game, sim_many_tournaments
 from lib.graphs import density_plot
 
-DB_PATH = 'lib/march_madness.db'
-
 #########################################################################################################
 headliner = "Gonzaga beats TCU"
 i = 53
-
 #########################################################################################################
-create_database(True)
 
 def sim_tournament():
 
@@ -195,5 +191,7 @@ def sim_tournament():
     return points_dict, points_decided
 
 
-points_lists = sim_many_tournaments(10_000, sim_tournament)
-density_plot(points_lists, headliner, i)
+if __name__ == '__main__':
+    create_database(True)
+    points_lists = sim_many_tournaments(10_000, sim_tournament)
+    density_plot(points_lists, headliner, i)

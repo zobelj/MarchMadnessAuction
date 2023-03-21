@@ -62,7 +62,7 @@ def density_plot(points_lists, headliner, i):
 
     if(var(Devan)):
         sns.kdeplot(Devan, linewidth=THICKNESS, color="tab:blue")
-        legend_list.append(f"Jeremy:  {win_pcts['Devan']}")
+        legend_list.append(f"Devan:  {win_pcts['Devan']}")
 
     if(var(Jeremy)):
         sns.kdeplot(Jeremy, linewidth=THICKNESS, color="tab:orange")
@@ -70,24 +70,24 @@ def density_plot(points_lists, headliner, i):
 
     if(var(Josh)):
         sns.kdeplot(Josh, linewidth=THICKNESS, color="tab:green")
-        legend_list.append(f"Jeremy:  {win_pcts['Josh']}")
+        legend_list.append(f"Joe:  {win_pcts['Josh']}")
 
     # if(var(Justin)):
     #     sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
-    #     legend_list.append(f"Jeremy:  {win_pcts['Justin']}")
+    #     legend_list.append(f"Justin:  {win_pcts['Justin']}")
 
     # Brant's odds are < 1%
     # if(var(Brant)):
     #     sns.kdeplot(Brant, linewidth=THICKNESS, color="tab:purple")
-    #     legend_list.append(f"Jeremy:  {win_pcts['Brant']}")
+    #     legend_list.append(f"Brant:  {win_pcts['Brant']}")
 
     if(var(Nick)):
         sns.kdeplot(Nick, linewidth=THICKNESS, color="tab:brown")
-        legend_list.append(f"Jeremy:  {win_pcts['Nick']}")
+        legend_list.append(f"Nick:  {win_pcts['Nick']}")
 
     if(var(Joe)):
         sns.kdeplot(Joe, linewidth=THICKNESS, color="tab:pink")
-        legend_list.append(f"Jeremy:  {win_pcts['Joe']}")
+        legend_list.append(f"Joe:  {win_pcts['Joe']}")
 
     # configure and display plot
     plt.title(headliner)
