@@ -39,7 +39,7 @@ def density_plot(points_lists, headliner, i):
                         (ROUND(100 * AVG(Justin_win), 2) || '%') as Justin_win_pct,
                         (ROUND(100 * AVG(Nick_win), 2) || '%') as Nick_win_pct,
                         (ROUND(100 * AVG(Joe_win), 2) || '%') as Joe_win_pct
-                    FROM march_madness''', fetch="one")
+                    FROM tourney_results''', fetch="one")
 
     # convert win_pcts to a dictionary
     win_pcts = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], win_pcts))
