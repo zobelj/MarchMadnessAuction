@@ -4,7 +4,7 @@ import random as rd
 import string as str
 
 from lib.teams import *
-from lib.database import create_database, run_query
+from lib.database import create_tables, run_query
 from lib.simulate import sim_game, sim_many_tournaments
 from lib.graphs import density_plot
 
@@ -147,7 +147,7 @@ def sim_tournament():
             wins[player] += 1
 
     # add row to march_madness.db
-    query_1 = (f'''INSERT INTO march_madness VALUES (
+    query_1 = (f'''INSERT INTO tourney_results VALUES (
             '{sim_id}', 
             {wins["Devan"]}, {wins["Jeremy"]}, {wins["Josh"]}, {wins["Justin"]}, {wins["Brant"]}, {wins["Nick"]}, {wins["Joe"]},
             {points_dict["Devan"]}, {points_dict["Jeremy"]}, {points_dict["Josh"]}, {points_dict["Justin"]}, {points_dict["Brant"]}, {points_dict["Nick"]}, {points_dict["Joe"]},
@@ -172,7 +172,7 @@ def sim_tournament():
                 "{west_midwest_winner[0].name}", {west_midwest_winner[1]},
                 "{champion[0].name}", {champion[1]})''')
     
-    query_2 = (f'''INSERT INTO march_madness_team_pts VALUES(
+    query_2 = (f'''INSERT INTO schools_pts VALUES(
                 '{sim_id}',
                 {mississippi_state.pts}, {pittsburgh.pts}, {arizona_state.pts}, {nevada.pts},
                 {texas_southern.pts}, {fairleigh_dickinson.pts}, {texas_am_corpus_christi.pts}, {southeast_missouri_state.pts},
@@ -192,6 +192,6 @@ def sim_tournament():
 
 
 if __name__ == '__main__':
-    create_database(True)
+    create_tables(True)
     points_lists = sim_many_tournaments(10_000, sim_tournament)
     density_plot(points_lists, headliner, i)

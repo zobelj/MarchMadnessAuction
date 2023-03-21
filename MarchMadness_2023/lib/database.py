@@ -2,16 +2,16 @@ import sqlite3
 
 DB_PATH = 'lib/march_madness.db'
 
-def create_database(drop_existing=False):
+def create_tables(drop_existing=False):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     if(drop_existing):
-        print("Dropping existing table march_madness...")
-        c.execute("DROP TABLE IF EXISTS march_madness")
-        c.execute("DROP TABLE IF EXISTS march_madness_team_pts")
+        print("Dropping existing table tourney_results...")
+        c.execute("DROP TABLE IF EXISTS tourney_results")
+        c.execute("DROP TABLE IF EXISTS schools_pts")
     # Create table
-    c.execute('''CREATE TABLE IF NOT EXISTS march_madness
+    c.execute('''CREATE TABLE IF NOT EXISTS tourney_results
                     (sim_id text PRIMARY KEY,
                     Devan_win integer, Jeremy_win integer, Josh_win integer, Justin_win integer, Brant_win integer, Nick_win integer, Joe_win integer,
                         Devan_pts integer, Jeremy_pts integer, Josh_pts integer, Justin_pts integer, Brant_pts integer, Nick_pts integer, Joe_pts integer,
@@ -34,7 +34,7 @@ def create_database(drop_existing=False):
                 west_winner text, west_winner_blowout integer, midwest_winner text, midwest_winner_blowout integer, east_winner text, east_winner_blowout integer, south_winner text, south_winner_blowout integer,
                 south_east_winner text, south_east_winner_blowout integer, west_midwest_winner text, west_midwest_winner_blowout integer,
                 final_winner text, final_winner_blowout integer)''')
-    c.execute('''CREATE TABLE IF NOT EXISTS march_madness_team_pts
+    c.execute('''CREATE TABLE IF NOT EXISTS schools_pts
                     (sim_id text PRIMARY KEY,
                         mississippi_state_pts integer, pittsburgh_pts integer, arizona_state_pts integer, nevada_pts integer,
                         texas_southern_pts integer, fairleigh_dickinson_pts integer, texas_am_corpus_christi_pts integer, southeast_missouri_state_pts integer,

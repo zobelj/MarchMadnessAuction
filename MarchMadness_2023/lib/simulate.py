@@ -124,7 +124,7 @@ def sim_many_tournaments(num_sims, sim_tournament):
                         ROUND(AVG(Justin_pts), 2) as Justin_avg_pts,
                         ROUND(AVG(Nick_pts), 2) as Nick_avg_pts,
                         ROUND(AVG(Joe_pts), 2) as Joe_avg_pts
-                    FROM march_madness''', fetch="one")
+                    FROM tourney_results''', fetch="one")
     
     # convert DB results into python dictionaries
     avg_points = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], avg_points))
