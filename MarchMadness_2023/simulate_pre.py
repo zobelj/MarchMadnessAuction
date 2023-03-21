@@ -192,5 +192,6 @@ def sim_tournament():
 
 
 if __name__ == '__main__':
+    create_tables()
     points_lists = sim_many_tournaments(10_00, sim_tournament)
     density_plot(points_lists, headliner, i)
