@@ -27,7 +27,7 @@ def violin_plot(school_version = False, pre_tourney = False, i = 0):
     sns.violinplot(data=df, inner="quartile", scale = "count", cut = 0, orient = "h", bw=.2, width = 1)
     plt.subplots_adjust(left=0.2, right=0.9, top=0.9, bottom=0.1, hspace = 0.5)
     plt.xticks(fontsize=20)
-    plt.savefig(f"mm_violin_{'school' if school_version else 'tourney'}_{'pre ' if pre_tourney else ''}_{i}.png")
+    plt.savefig(f"violin_figs/violin_{'school' if school_version else 'tourney'}_{'pre ' if pre_tourney else ''}_{i}.png")
     plt.show()
 
 
