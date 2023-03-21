@@ -1,4 +1,5 @@
 import sqlite3
+import pandas as pd
 
 DB_PATH = 'lib/march_madness.db'
 
@@ -123,6 +124,8 @@ def run_query(query, fetch=None):
         return c.fetchall()
     elif fetch == "one":
         return c.fetchone()
+    elif fetch == "sql":
+        return pd.read_sql_query(query, conn)
     
     conn.commit()
 

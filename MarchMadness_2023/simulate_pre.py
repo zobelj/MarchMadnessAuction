@@ -6,7 +6,7 @@ import string as str
 from lib.teams import *
 from lib.database import create_pre_tables, run_query
 from lib.simulate import sim_game, sim_many_tournaments
-from lib.graphs import density_plot
+from lib.graphs import density_plot, violin_plot
 
 #########################################################################################################
 headliner = "Pre-Tournament"
@@ -193,5 +193,6 @@ def sim_tournament():
 
 if __name__ == '__main__':
     create_pre_tables(True)
-    points_lists = sim_many_tournaments(10_000, sim_tournament, is_pre=True)
+    points_lists = sim_many_tournaments(1_000, sim_tournament, is_pre=True)
     density_plot(points_lists, headliner, i, is_pre=True)
+    violin_plot(i=i, is_pre=True)

@@ -6,7 +6,7 @@ import string as str
 from lib.teams import *
 from lib.database import create_tables, run_query
 from lib.simulate import sim_game, sim_many_tournaments
-from lib.graphs import density_plot
+from lib.graphs import density_plot, violin_plot
 
 #########################################################################################################
 headliner = "Gonzaga beats TCU"
@@ -195,3 +195,5 @@ if __name__ == '__main__':
     create_tables(True)
     points_lists = sim_many_tournaments(10_000, sim_tournament)
     density_plot(points_lists, headliner, i)
+    violin_plot(i=i)
+
