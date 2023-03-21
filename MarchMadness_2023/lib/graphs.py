@@ -72,7 +72,7 @@ def density_plot(points_lists, headliner, i, is_pre=False):
 
     if(var(Josh)):
         sns.kdeplot(Josh, linewidth=THICKNESS, color="tab:green")
-        legend_list.append(f"Joe:  {win_pcts['Josh']}")
+        legend_list.append(f"Josh:  {win_pcts['Josh']}")
 
     # if(var(Justin)):
     #     sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
