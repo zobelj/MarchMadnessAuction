@@ -1,6 +1,19 @@
+# Ignore __pyacache folders
+__pycache__/
+**/__pycache__/
+
+# Ignore .DS_Store files/folders
 .DS_Store
 .DS_Store/
-*/.DS_Store
-*/.DS_Store/
-MarchMadness_2023/avg_pts.csv
-MarchMadness_2023/__pycache__/
+**/.DS_Store
+**/.DS_Store/
+
+# Ignore any local databases
+**/*.db
+
+# Ignore Secrets file
+MarchMadness_2023/lib/Secrets.py
+
+# Ignore plots generated
+MarchMadness_2023/mm_figs/
+MarchMadness_2023/violin_figs/

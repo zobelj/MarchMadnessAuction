@@ -1,5 +1,7 @@
 import openai
 
+from lib.Secrets import API_KEY
+
 def prepare_prompt(prompt_text):
   prompt = f'''Here is a database table schema.
     Table: tourney_results
