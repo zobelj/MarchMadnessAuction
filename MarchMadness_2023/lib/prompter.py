@@ -1,8 +1,7 @@
-import openai
-from lib.database import *
-
 import re
+import openai
 
+from lib.database import *
 from lib.Secrets import API_KEY
 
 def prepare_prompt(prompt_text):
