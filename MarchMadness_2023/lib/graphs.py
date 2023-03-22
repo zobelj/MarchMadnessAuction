@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from numpy import var
 import seaborn as sns
 
-from database import run_query
+from lib.database import run_query
 
 def violin_plot(school_version = False, i=0, is_pre=False):
     # build query
