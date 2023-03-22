@@ -3,7 +3,10 @@ from lib.prompter import generate_response
 
 if __name__ == '__main__':
     #ask the user for a question
-    while(True):
-        question = input("Enter a question: ")
+    while(question := input("Enter a question: ")):
+        if question == "exit":
+            break
         answer = generate_response(question)[0]
-        print(answer + "\n\n")
+        
+        if(answer): print(f"{answer}\n\n")
+    

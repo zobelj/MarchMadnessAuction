@@ -51,6 +51,12 @@ def generate_query(prompt): # Initial message is system prompt in the form {"rol
         temperature=0.2, # Changes how creative the response is
     )
     reply = response["choices"][0]["message"]["content"]
+
+    # make sure that reply does not contain the words in this list: ("drop", "update", "insert")
+    if ( reply.lower().find("drop") != -1 or reply.lower().find("update") != -1 or reply.lower().find("insert") != -1 ):
+        print("Bad query detected.\n")
+        return None, None
+        
     messages.append({"role": "assistant", "content": reply})
 
     return reply, messages
@@ -64,13 +70,11 @@ def get_headers(query):
 def generate_response(initial_prompt):
     print("Generating response...")
     query = generate_query(initial_prompt)[0]
-    #print(query)
+    
+    if query is None: return None, None
+
     #replace new line characters with spaces
-
-    query = query.replace('/n', ' ')
-    #get rid of any string of triple quotes
-
-    query = query.replace("'''", '')
+    query = query.replace('/n', ' ').replace("'''", '')
     #print("getting headers")
     headers = get_headers(query)
 
