@@ -32,7 +32,7 @@ def prepare_prompt(prompt_text):
   return prompt
 
 def generate_response(prompt): # Initial message is system prompt in the form {"role": "system", "content": message}
-    openai.api_key = "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"
+    openai.api_key = API_KEY
     messages = []
     messages.append({"role": "system", "content": prepare_prompt(prompt)})
     response = openai.ChatCompletion.create(
