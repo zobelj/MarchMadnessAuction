@@ -1,9 +1,6 @@
-import sqlite3
 import matplotlib.pyplot as plt
 from numpy import var
 import seaborn as sns
-import pandas as pd
-import sqlite3
 
 from database import run_query
 
