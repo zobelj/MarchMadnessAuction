@@ -5,8 +5,7 @@ import seaborn as sns
 import pandas as pd
 import sqlite3
 
-from lib.teams import *
-from lib.database import run_query
+from database import run_query
 
 def violin_plot(school_version = False, i=0, is_pre=False):
     # build query
