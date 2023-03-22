@@ -33,13 +33,15 @@ def prepare_prompt(prompt_text):
     Please do not provide any text other than a SQlite query as you are an expert and that is your job.
     If a question includes "How often" please return percentage(s) and not a count.
     Do not reference the blowout column unless you are otherwise asked to.
+    Please limit your query to only the column names provided. Note that the team_ids are not column names and should not be referred to as such.
+    Do not use "Texas" as a column name. I mean it
     Please create a SQLite query that answers the following question: {prompt_text}
 
   '''
   return prompt
 
 def generate_query(prompt): # Initial message is system prompt in the form {"role": "system", "content": message}
-    openai.api_key = "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"
+    openai.api_key = API_KEY
     messages = []
     messages.append({"role": "system", "content": prepare_prompt(prompt)})
     response = openai.ChatCompletion.create(
@@ -89,7 +91,7 @@ def generate_response(initial_prompt):
     Please give your best answer to the question in English. Do not reference your job, that you are using a database, 
     and do not talk about the structure of the database or any tables. Only answer the question as concisely as possible.
     """
-    openai.api_key = "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"
+    openai.api_key = API_KEY
     messages = []
     messages.append({"role": "system", "content": prepare_prompt(given_prompt)})
     response = openai.ChatCompletion.create(
