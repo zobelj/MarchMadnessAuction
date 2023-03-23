@@ -5,20 +5,33 @@ from lib.database import *
 from lib.Secrets import API_KEY
 
 def prepare_prompt(prompt_text):
-  prompt = f'''Here is a database table schema.
+  prompt = f'''
+    My friends and I are playing a fantasy March Madness auction where we choose teams and gain points based on how
+    the teams perform in the tournament. The player with the most points wins. The player's names are Devan, Jeremy,
+    Josh, Justin, Brant, Nick, and Joe. We have a database table that stores the results of many simulated tournaments.
+
+    Here is a database table schema.
     Table: tourney_results
-    Columns: the following columns are integers representing the number of points scored by each player and whether they won (1 or 0).
+    Columns: 
     Devan_pts, Jeremy_pts, Josh_pts, Justin_pts, Nick_pts, Joe_pts,
     Devan_win, Jeremy_win, Josh_win, Justin_win, Nick_win, Joe_win,
     west_winner text, west_winner_blowout integer, midwest_winner text, midwest_winner_blowout integer, east_winner text, east_winner_blowout integer, south_winner text, south_winner_blowout integer,
     south_east_winner text, south_east_winner_blowout integer, west_midwest_winner text, west_midwest_winner_blowout integer,
     final_winner text, final_winner_blowout
 
-    The columns ending in _winner represent a team. A final four team (or Elite 8 winner) will be listed in any of:
-    west_winner, midwest_winner, east_winner, south_winner
-    A final four winner, or a team in the championship, will be in one of: south_east_winner, west_midwest_winner
-    The final winner will be in the final_winner column.
-    To calculate a player's win percentage, take the avg of their _win column.
+    The columns ending in _pts represent a player's points. A player's points are the sum of the points they earned from the teams they chose.
+    The columns ending in _win hold boolean values where 0 means the player did not win the auction and 1 means they did win.
+    The columns ending in _winner represent teams (also known as schools) and hold the team_id of the team that won that round of the tournament.
+
+    Each row in the table represents a simulated tournament. The teams that won each round of the tournament are listed in the _winner columns and exactly
+    ONE of the _win columns will be 1 indicating that player won the auction. For example, Joe_win = 1 means that Joe won the auction and the other players lost.
+
+    A final four team (or Elite 8 winner, or region winner) will be listed in any of these columns: west_winner, midwest_winner, east_winner, south_winner
+
+    A final four winner (or a team in the championship) will be in one of these columns: south_east_winner, west_midwest_winner
+    The final winner (or the team that wins the championship/title) will be in the final_winner column.
+    To calculate a player's win percentage, take the avg of their _win column. When calculating a player's average win percentage, make sure not to use "WHERE player_win = 1" since that will
+    cause the win percentage to appear to be 100% when it should not be.
     The team ids are as follows:
     Oral Roberts, VCU, Louisiana, Northwestern, Southeast Missouri St., Marquette, Florida Atlantic,
     TCU, Texas, Vermont, UC Santa Barbara, Grand Canyon, Arizona St., Providence, Memphis, Duke, Howard,
@@ -28,13 +41,21 @@ def prepare_prompt(prompt_text):
     Mississippi St., Utah St., UCLA, Texas Southern, Saint Mary's, Miami FL, Texas A&M Corpus Chris, Purdue
     Arizona, Creighton, USC, Montana St., Arkansas, Iowa, Tennessee, Princeton, N.C. State, Gonzaga, Kansas,
     Charleston, Iona, Virginia, Missouri.
+
     Please make sure when you are using a team, that the team_id comes from the list above.
     Pretend that you are a professional database engineer and can always craft a working query.
     Please do not provide any text other than a SQlite query as you are an expert and that is your job.
-    If a question includes "How often" please return percentage(s) and not a count.
-    Do not reference the blowout column unless you are otherwise asked to.
+    If a question includes "How often" or similar language, please return percentage(s) and not a count.
+    Do not reference the blowout column unless you are specifically asked to.
     Please limit your query to only the column names provided. Note that the team_ids are not column names and should not be referred to as such.
-    Do not use "Texas" as a column name. I mean it
+
+    Here is an example question: "Given that Texas wins the midwest region, what is Joe's win percentage?"
+    Here is an example answer: 
+
+    SELECT AVG(Joe_win) AS Joe_win_percentage
+    FROM tourney_results
+    WHERE midwest_winner = 'Texas'
+
     Please create a SQLite query that answers the following question: {prompt_text}
 
   '''
