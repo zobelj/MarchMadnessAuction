@@ -10,8 +10,8 @@ from lib.graphs import density_plot, violin_plot
 from lib.general import get_options
 
 #########################################################################################################
-headliner = "Gonzaga beats TCU"
-i = 53
+headliner = "Gonzaga beats UCLA"
+i = 57
 #########################################################################################################
 
 def sim_tournament():
@@ -52,8 +52,8 @@ def sim_tournament():
     r32_w_game4 = sim_game(r64_w_game7[0], r64_w_game8[0], 32, points_dict, points_decided, [0,1]) # Northwestern vs UCLA
 
     # Sweet 16
-    r16_w_game1 = sim_game(r32_w_game1[0], r32_w_game2[0], 16, points_dict, points_decided, []) # Arkansas vs UConn
-    r16_w_game2 = sim_game(r32_w_game3[0], r32_w_game4[0], 16, points_dict, points_decided, []) # Gonzaga vs UCLA
+    r16_w_game1 = sim_game(r32_w_game1[0], r32_w_game2[0], 16, points_dict, points_decided, [0,3]) # Arkansas vs UConn
+    r16_w_game2 = sim_game(r32_w_game3[0], r32_w_game4[0], 16, points_dict, points_decided, [1,0]) # Gonzaga vs UCLA
 
     # Elite 8
     west_winner = sim_game(r16_w_game1[0], r16_w_game2[0], 8, points_dict, points_decided, [])
@@ -102,8 +102,8 @@ def sim_tournament():
     r32_e_game4 = sim_game(r64_e_game7[0], r64_e_game8[0], 32, points_dict, points_decided, [1,0]) # Michigan State vs Marquette
 
     # Sweet 16
-    r16_e_game1 = sim_game(r32_e_game1[0], r32_e_game2[0], 16, points_dict, points_decided, []) # Florida Atlantic vs Tennessee
-    r16_e_game2 = sim_game(r32_e_game3[0], r32_e_game4[0], 16, points_dict, points_decided, []) # Kansas State vs Michigan State
+    r16_e_game1 = sim_game(r32_e_game1[0], r32_e_game2[0], 16, points_dict, points_decided, [1,0]) # Florida Atlantic vs Tennessee
+    r16_e_game2 = sim_game(r32_e_game3[0], r32_e_game4[0], 16, points_dict, points_decided, [1,0]) # Kansas State vs Michigan State
 
     # Elite 8
     east_winner = sim_game(r16_e_game1[0], r16_e_game2[0], 8, points_dict, points_decided, [])
