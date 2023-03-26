@@ -39,12 +39,13 @@ def density_plot(points_lists, headliner, i, is_pre=False):
                         (ROUND(100 * AVG(Jeremy_win), 2) || '%') as Jeremy_win_pct,
                         (ROUND(100 * AVG(Josh_win), 2) || '%') as Josh_win_pct,
                         (ROUND(100 * AVG(Justin_win), 2) || '%') as Justin_win_pct,
+                        (ROUND(100 * AVG(Brant_win), 2) || '%') as Brant_win_pct,
                         (ROUND(100 * AVG(Nick_win), 2) || '%') as Nick_win_pct,
                         (ROUND(100 * AVG(Joe_win), 2) || '%') as Joe_win_pct
                     FROM {tourney_table}''', fetch="one")
 
     # convert win_pcts to a dictionary
-    win_pcts = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Nick", "Joe"], win_pcts))
+    win_pcts = dict(zip(["Devan", "Jeremy", "Josh", "Justin", "Brant", "Nick", "Joe"], win_pcts))
 
     # plot density function for owners with non-zero variance
     legend_list = []
@@ -53,8 +54,8 @@ def density_plot(points_lists, headliner, i, is_pre=False):
     Devan = points_lists['Devan']
     Jeremy = points_lists['Jeremy']
     Josh = points_lists['Josh']
-    #Justin = points_lists['Justin']
-    #Brant = points_lists['Brant']
+    Justin = points_lists['Justin']
+    Brant = points_lists['Brant']
     Nick = points_lists['Nick']
     Joe = points_lists['Joe']
 
@@ -70,14 +71,14 @@ def density_plot(points_lists, headliner, i, is_pre=False):
         sns.kdeplot(Josh, linewidth=THICKNESS, color="tab:green")
         legend_list.append(f"Josh:  {win_pcts['Josh']}")
 
-    # if(var(Justin)):
-    #     sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
-    #     legend_list.append(f"Justin:  {win_pcts['Justin']}")
+    if(var(Justin)):
+        sns.kdeplot(Justin, linewidth=THICKNESS, color="tab:red")
+        legend_list.append(f"Justin:  {win_pcts['Justin']}")
 
     # Brant's odds are < 1%
-    # if(var(Brant)):
-    #     sns.kdeplot(Brant, linewidth=THICKNESS, color="tab:purple")
-    #     legend_list.append(f"Brant:  {win_pcts['Brant']}")
+    if(var(Brant)):
+        sns.kdeplot(Brant, linewidth=THICKNESS, color="tab:purple")
+        legend_list.append(f"Brant:  {win_pcts['Brant']}")
 
     if(var(Nick)):
         sns.kdeplot(Nick, linewidth=THICKNESS, color="tab:brown")
