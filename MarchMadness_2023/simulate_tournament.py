@@ -10,8 +10,8 @@ from lib.graphs import density_plot, violin_plot
 from lib.general import get_options
 
 #########################################################################################################
-headliner = "Gonzaga beats UCLA"
-i = 57
+headliner = "UConn beats Gonzaga"
+i = 63
 #########################################################################################################
 
 def sim_tournament():
@@ -56,7 +56,7 @@ def sim_tournament():
     r16_w_game2 = sim_game(r32_w_game3[0], r32_w_game4[0], 16, points_dict, points_decided, [1,0]) # Gonzaga vs UCLA
 
     # Elite 8
-    west_winner = sim_game(r16_w_game1[0], r16_w_game2[0], 8, points_dict, points_decided, [])
+    west_winner = sim_game(r16_w_game1[0], r16_w_game2[0], 8, points_dict, points_decided, [0,3]) # Gonzaga vs UConn
 
     ##### Midwest Region #####
     # Round of 64
@@ -77,11 +77,11 @@ def sim_tournament():
     r32_mw_game4 = sim_game(r64_mw_game7[0], r64_mw_game8[0], 32, points_dict, points_decided, [0,1]) # Penn State vs Texas
 
     # Sweet 16
-    r16_mw_game1 = sim_game(r32_mw_game1[0], r32_mw_game2[0], 16, points_dict, points_decided, []) # Houston vs Miami
-    r16_mw_game2 = sim_game(r32_mw_game3[0], r32_mw_game4[0], 16, points_dict, points_decided, []) # Xavier vs Texas
+    r16_mw_game1 = sim_game(r32_mw_game1[0], r32_mw_game2[0], 16, points_dict, points_decided, [0,2]) # Houston vs Miami
+    r16_mw_game2 = sim_game(r32_mw_game3[0], r32_mw_game4[0], 16, points_dict, points_decided, [0,2]) # Xavier vs Texas
 
     # Elite 8
-    midwest_winner = sim_game(r16_mw_game1[0], r16_mw_game2[0], 8, points_dict, points_decided, [])
+    midwest_winner = sim_game(r16_mw_game1[0], r16_mw_game2[0], 8, points_dict, points_decided, []) # Miami vs Texas
 
 
     ##### East Region    #####
@@ -106,7 +106,7 @@ def sim_tournament():
     r16_e_game2 = sim_game(r32_e_game3[0], r32_e_game4[0], 16, points_dict, points_decided, [1,0]) # Kansas State vs Michigan State
 
     # Elite 8
-    east_winner = sim_game(r16_e_game1[0], r16_e_game2[0], 8, points_dict, points_decided, [])
+    east_winner = sim_game(r16_e_game1[0], r16_e_game2[0], 8, points_dict, points_decided, [1,0]) # Florida Atlantic vs Kansas State
 
     ##### South Region   #####
     # Round of 64
@@ -127,15 +127,15 @@ def sim_tournament():
     r32_s_game4 = sim_game(r64_s_game7[0], r64_s_game8[0], 32, points_dict, points_decided, [0,2]) # Missouri vs Princeton
 
     # Sweet 16
-    r16_s_game1 = sim_game(r32_s_game1[0], r32_s_game2[0], 16, points_dict, points_decided, []) # Alabama vs San Diego State
-    r16_s_game2 = sim_game(r32_s_game3[0], r32_s_game4[0], 16, points_dict, points_decided, []) # Creighton vs Princeton
+    r16_s_game1 = sim_game(r32_s_game1[0], r32_s_game2[0], 16, points_dict, points_decided, [0,1]) # Alabama vs San Diego State
+    r16_s_game2 = sim_game(r32_s_game3[0], r32_s_game4[0], 16, points_dict, points_decided, [2,0]) # Creighton vs Princeton
 
     # Elite 8
-    south_winner = sim_game(r16_s_game1[0], r16_s_game2[0], 8, points_dict, points_decided, [])
+    south_winner = sim_game(r16_s_game1[0], r16_s_game2[0], 8, points_dict, points_decided, []) # San Diego State vs Creighton
 
     # Final Four
-    south_east_winner = sim_game(south_winner[0], east_winner[0], 4, points_dict, points_decided, [])
-    west_midwest_winner = sim_game(west_winner[0], midwest_winner[0], 4, points_dict, points_decided, [])
+    south_east_winner = sim_game(south_winner[0], east_winner[0], 4, points_dict, points_decided, []) # ???? vs Florida Atlantic
+    west_midwest_winner = sim_game(west_winner[0], midwest_winner[0], 4, points_dict, points_decided, []) # UConn vs ????
 
     # Championship
     champion = sim_game(south_east_winner[0], west_midwest_winner[0], 2, points_dict, points_decided, [])
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     opts = get_options()
 
     create_tables(True)
-    points_lists = sim_many_tournaments(opts.num_sims, sim_tournament)
+    points_lists = sim_many_tournaments(opts.num_sims * 1000, sim_tournament)
     density_plot(points_lists, headliner, i)
     violin_plot(i=i)
 
