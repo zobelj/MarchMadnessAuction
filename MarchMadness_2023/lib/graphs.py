@@ -24,7 +24,15 @@ def violin_plot(school_version = False, i=0, is_pre=False):
         df.rename(columns={column: column[:-4]}, inplace=True)
     #order the columns of the df in order of mean
     df = df.reindex(df.mean().sort_values(ascending=False).index, axis=1)
-    sns.violinplot(data=df, inner="quartile", scale = "count", cut = 0, orient = "h", bw=.2, width = 1)
+    ax = sns.violinplot(data=df, inner="quartile", scale = "count", cut = 0, orient = "h", bw=.2, width = 1)
+    #if there is only one possible value for the column, that put a dot there instead of a violin. make sure they
+    # are being graphed for the correct column
+    col = 0
+    for column in df.columns:
+        if len(df[column].unique()) == 1:
+            ax.scatter(df[column].unique()[0], col, color = "black", s = 15)
+        col += 1
+
     plt.subplots_adjust(left=0.2, right=0.9, top=0.9, bottom=0.1, hspace = 0.5)
     plt.xticks(fontsize=20)
     plt.savefig(outfile)
