@@ -8,10 +8,11 @@ from lib.database import create_tables, run_query
 from lib.simulate import sim_game, sim_many_tournaments
 from lib.graphs import density_plot, violin_plot
 from lib.general import get_options
+from lib.scraper import download_kp_summary
 
 #########################################################################################################
-headliner = "UConn beats Gonzaga"
-i = 63
+headliner = "Miami beats Texas"
+i = 70
 #########################################################################################################
 
 def sim_tournament():
@@ -56,7 +57,7 @@ def sim_tournament():
     r16_w_game2 = sim_game(r32_w_game3[0], r32_w_game4[0], 16, points_dict, points_decided, [1,0]) # Gonzaga vs UCLA
 
     # Elite 8
-    west_winner = sim_game(r16_w_game1[0], r16_w_game2[0], 8, points_dict, points_decided, [0,3]) # Gonzaga vs UConn
+    west_winner = sim_game(r16_w_game1[0], r16_w_game2[0], 8, points_dict, points_decided, [3,0]) # UConn vs Gonzaga
 
     ##### Midwest Region #####
     # Round of 64
@@ -81,7 +82,7 @@ def sim_tournament():
     r16_mw_game2 = sim_game(r32_mw_game3[0], r32_mw_game4[0], 16, points_dict, points_decided, [0,2]) # Xavier vs Texas
 
     # Elite 8
-    midwest_winner = sim_game(r16_mw_game1[0], r16_mw_game2[0], 8, points_dict, points_decided, []) # Miami vs Texas
+    midwest_winner = sim_game(r16_mw_game1[0], r16_mw_game2[0], 8, points_dict, points_decided, [1,0]) # Miami vs Texas
 
 
     ##### East Region    #####
@@ -131,11 +132,11 @@ def sim_tournament():
     r16_s_game2 = sim_game(r32_s_game3[0], r32_s_game4[0], 16, points_dict, points_decided, [2,0]) # Creighton vs Princeton
 
     # Elite 8
-    south_winner = sim_game(r16_s_game1[0], r16_s_game2[0], 8, points_dict, points_decided, []) # San Diego State vs Creighton
+    south_winner = sim_game(r16_s_game1[0], r16_s_game2[0], 8, points_dict, points_decided, [1,0]) # San Diego State vs Creighton
 
     # Final Four
-    south_east_winner = sim_game(south_winner[0], east_winner[0], 4, points_dict, points_decided, []) # ???? vs Florida Atlantic
-    west_midwest_winner = sim_game(west_winner[0], midwest_winner[0], 4, points_dict, points_decided, []) # UConn vs ????
+    south_east_winner = sim_game(south_winner[0], east_winner[0], 4, points_dict, points_decided, []) # San Diego State vs Florida Atlantic
+    west_midwest_winner = sim_game(west_winner[0], midwest_winner[0], 4, points_dict, points_decided, []) # UConn vs Miami
 
     # Championship
     champion = sim_game(south_east_winner[0], west_midwest_winner[0], 2, points_dict, points_decided, [])
@@ -195,7 +196,9 @@ def sim_tournament():
 if __name__ == '__main__':
     opts = get_options()
 
-    create_tables(True)
+    download_kp_summary("summary2") # get updated kenpom metrics
+    create_tables(True) # drop old simulations and create new, empty tables
+
     points_lists = sim_many_tournaments(opts.num_sims * 1000, sim_tournament)
     density_plot(points_lists, headliner, i)
     violin_plot(i=i)
