@@ -12,7 +12,7 @@ class Team():
         
 
 # read in the excel file of kenpom data
-df = pd.read_csv("data/summary.csv")
+df = pd.read_csv("data/summary2.csv")
 df.set_index("TeamName", inplace=True)
 
 
